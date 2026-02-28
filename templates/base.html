@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Bootstrap 5 Website Example</title>
+        <title>{{ company_info.name }} {% block title %}{% endblock %}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}" />
@@ -19,87 +19,111 @@
     </head>
     <body>
         <div class="bg-warning text-white text-center">
-            <p>Resize this responsive page to see the effect!</p>
+            <p>
+                <a href="mailto:{{ company_info.email }}">{{ company_info.email }}</a> | {{ company_info.description }}
+                |
+                <a href="tel:{{ company_info.phone }}">{{ company_info.phone }}</a>
+            </p>
         </div>
-
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img
-                        src="https://httpbin.org/image/jpeg"
-                        alt="Avatar Logo"
-                        style="width: 40px"
-                        class="rounded-pill"
-                    />
+                <a class="navbar-brand" href="{% url 'company:home' %}">
+                    <img src="{{ company_info.logo.url }}" alt="Avatar Logo" style="width: 30px" class="rounded-pill" />
+                    {{ company_info.name }}
                 </a>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Active</a>
+                        <a class="nav-link" href="/">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link" href="/">Contact</a>
+                    </li>
+                    {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Sign In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Disabled</a>
+                        <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
 
         <div class="container mt-5">
-            <div class="row">
-                <div class="col-sm-4">
-                    <h2>About Me</h2>
-                    <h5>Photo of me:</h5>
-                    <div class="fakeimg">Fake Image</div>
-                    <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-                    <h3 class="mt-4">Some Links</h3>
-                    <p>Lorem ipsum dolor sit ame.</p>
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Active</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Disabled</a>
-                        </li>
-                    </ul>
-                    <hr class="d-sm-none" />
-                </div>
-                <div class="col-sm-8">
-                    <h2>TITLE HEADING</h2>
-                    <h5>Title description, Dec 7, 2020</h5>
-                    <div class="fakeimg">Fake Image</div>
-                    <p>Some text..</p>
-                    <p>
-                        Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed
-                        do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco.
-                    </p>
 
-                    <h2 class="mt-5">TITLE HEADING</h2>
-                    <h5>Title description, Sep 2, 2020</h5>
-                    <div class="fakeimg">Fake Image</div>
-                    <p>Some text..</p>
-                    <p>
-                        Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed
-                        do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco.
-                    </p>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Carousel -->
+                    <div id="demo" class="carousel slide" data-bs-ride="carousel">
+                        <!-- Indicators/dots -->
+                        <div class="carousel-indicators">
+                            <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+                            <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+                            <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+                        </div>
+
+                        <!-- The slideshow/carousel -->
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img
+                                    src="https://httpbin.org/image/png"
+                                    alt="Los Angeles"
+                                    class="d-block"
+                                    style="width: 20%"
+                                />
+                                <div class="carousel-caption">
+                                    <h3>Los Angeles</h3>
+                                    <p>We had such a great time in LA!</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img
+                                    src="https://httpbin.org/image/jpeg"
+                                    alt="Chicago"
+                                    class="d-block"
+                                    style="width: 20%"
+                                />
+                                <div class="carousel-caption">
+                                    <h3>Chicago</h3>
+                                    <p>Thank you, Chicago!</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <img
+                                    src="https://httpbin.org/image/webp"
+                                    alt="New York"
+                                    class="d-block"
+                                    style="width: 20%"
+                                />
+                                <div class="carousel-caption">
+                                    <h3>New York</h3>
+                                    <p>We love the Big Apple!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Left and right controls/icons -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="mt-5 p-4 bg-dark text-white text-center">
-            <p>Footer</p>
+            <address>{{ company_info.address }}</address>
         </div>
         {% bootstrap_javascript %}
     </body>

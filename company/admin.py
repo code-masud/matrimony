@@ -8,6 +8,7 @@ class CompanyInfoAdmin(admin.ModelAdmin):
     model = CompanyInfo
 
     list_display = ['logo_preview', 'name', 'phone', 'email', 'address']
+    list_display_links = ['logo_preview', 'name', 'phone', 'email', 'address']
 
     @admin.display(description='Logo')
     def logo_preview(self, obj):
