@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from services.uploads import avatar_upload_path, gallery_image_upload_path
+from services.validations import image_validation
 
 # Create your models here.
 class Profile(models.Model):
@@ -66,7 +68,8 @@ class Profile(models.Model):
 
     # Profile Media
     profile_picture = models.ImageField(
-        upload_to="matrimony/profile_pictures/",
+        upload_to=avatar_upload_path,
+        validators=[image_validation],
         blank=True,
         null=True
     )
@@ -125,7 +128,7 @@ class ProfilePhoto(models.Model):
         related_name="photos"
     )
 
-    image = models.ImageField(upload_to="matrimony/gallery/")
+    image = models.ImageField(upload_to=gallery_image_upload_path, validators=[image_validation])
     is_primary = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
