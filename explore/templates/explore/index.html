@@ -1,0 +1,108 @@
+{% extends "profile.html" %} {% block main %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .search-bar {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    .result-card img {
+        height: 220px;
+        object-fit: cover;
+    }
+</style>
+<br />
+<!-- Page Header -->
+<div class="text-center mb-4">
+    <h2 class="fw-bold">Search Profiles</h2>
+    <p class="text-muted">Find your perfect match by applying filters</p>
+</div>
+
+<!-- Search Bar -->
+<div class="search-bar">
+    <form class="row g-3">
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Name or Keyword" />
+        </div>
+        <div class="col-md-2">
+            <select class="form-select">
+                <option selected>Age Range</option>
+                <option>25-30</option>
+                <option>30-35</option>
+                <option>35-40</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select">
+                <option selected>Location</option>
+                <option>Dhaka</option>
+                <option>Delhi</option>
+                <option>Mumbai</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select">
+                <option selected>Religion</option>
+                <option>Hindu</option>
+                <option>Muslim</option>
+                <option>Christian</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-grid">
+            <button class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- Search Results -->
+<div class="row g-4 mt-3">
+    <!-- Result Card -->
+    <div class="col-md-4">
+        <div class="card result-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile" />
+            <div class="card-body">
+                <h5 class="card-title">Sophia Sharma, 28</h5>
+                <p class="card-text">Software Engineer | New Delhi</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Card -->
+    <div class="col-md-4">
+        <div class="card result-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Profile" />
+            <div class="card-body">
+                <h5 class="card-title">Arjun Kumar, 30</h5>
+                <p class="card-text">Entrepreneur | Bangalore</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Card -->
+    <div class="col-md-4">
+        <div class="card result-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Profile" />
+            <div class="card-body">
+                <h5 class="card-title">Priya Singh, 26</h5>
+                <p class="card-text">Teacher | Mumbai</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

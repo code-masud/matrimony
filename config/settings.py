@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'profiles.apps.ProfilesConfig',
     'matches.apps.MatchesConfig',
+    'explore.apps.ExploreConfig',
 
     'allauth',
     'allauth.account',
