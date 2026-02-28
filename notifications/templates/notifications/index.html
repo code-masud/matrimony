@@ -1,0 +1,65 @@
+{% extends "profile.html" %}
+{% block main %}
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .notification-card {
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .notification-card .icon {
+      font-size: 1.5rem;
+      margin-right: 10px;
+    }
+  </style>
+<br>
+  <!-- Page Header -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">Notifications</h2>
+    <p class="text-muted">Stay updated with your latest activities</p>
+  </div>
+
+  <!-- Notifications List -->
+  <div class="list-group">
+    <!-- Notification Item -->
+    <div class="list-group-item d-flex align-items-center notification-card">
+      <i class="bi bi-heart-fill text-danger icon"></i>
+      <div class="flex-grow-1">
+        <strong>Arjun Kumar</strong> sent you an Interest Request.
+        <div><small class="text-muted">2 hours ago</small></div>
+      </div>
+      <span class="badge bg-primary rounded-pill">New</span>
+    </div>
+
+    <!-- Notification Item -->
+    <div class="list-group-item d-flex align-items-center notification-card">
+      <i class="bi bi-check-circle-fill text-success icon"></i>
+      <div class="flex-grow-1">
+        <strong>Priya Singh</strong> accepted your Interest Request.
+        <div><small class="text-muted">Yesterday</small></div>
+      </div>
+      <span class="badge bg-success rounded-pill">Accepted</span>
+    </div>
+
+    <!-- Notification Item -->
+    <div class="list-group-item d-flex align-items-center notification-card">
+      <i class="bi bi-eye-fill text-info icon"></i>
+      <div class="flex-grow-1">
+        <strong>Rahul Mehta</strong> viewed your profile.
+        <div><small class="text-muted">3 days ago</small></div>
+      </div>
+      <span class="badge bg-info rounded-pill">Viewed</span>
+    </div>
+
+    <!-- Notification Item -->
+    <div class="list-group-item d-flex align-items-center notification-card">
+      <i class="bi bi-chat-dots-fill text-warning icon"></i>
+      <div class="flex-grow-1">
+        <strong>Ananya Gupta</strong> sent you a message.
+        <div><small class="text-muted">1 week ago</small></div>
+      </div>
+      <span class="badge bg-warning rounded-pill">Message</span>
+    </div>
+  </div>
+{% endblock %}

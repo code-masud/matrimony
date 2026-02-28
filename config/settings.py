@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'profiles.apps.ProfilesConfig',
     'matches.apps.MatchesConfig',
     'explore.apps.ExploreConfig',
+    'notifications.apps.NotificationsConfig',
 
     'allauth',
     'allauth.account',
