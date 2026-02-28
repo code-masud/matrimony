@@ -8,6 +8,12 @@ def logo_upload_path(instance, filename):
     filename = f'{unique_identity}{ext}'
     return os.path.join('logo', filename)
 
+def carousel_upload_path(instance, filename):
+    root, ext = os.path.splitext(filename)
+    unique_identity = slugify(instance.title) +'-'+ uuid.uuid4().hex
+    filename = f'{unique_identity}{ext}'
+    return os.path.join('carousel', filename)
+
 def avatar_upload_path(instance, filename):
     root, ext = os.path.splitext(filename)
     unique_identity = slugify(instance.id) +'-'+ uuid.uuid4().hex
