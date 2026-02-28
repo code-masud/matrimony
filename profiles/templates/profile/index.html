@@ -1,10 +1,15 @@
-{% extends "base.html" %} {% block title %} | {{ title }} {% endblock %} {% block notification %}
+{% extends "base.html" %}
+
+{% block title %} | {{ title }} {% endblock %}
+
+{% block notification %}
 <li class="nav-item">
     <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#notificationModal">
         Notifications
     </a>
 </li>
-{% endblock %} {% block content %}
+{% endblock %}
+{% block content %}
 <style>
     body {
         background-color: #f8f9fa;
