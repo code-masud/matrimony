@@ -5,7 +5,14 @@
 {% block notification %}
 <li class="nav-item">
     <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#notificationModal">
-        Notifications
+        Notifications <span class="badge bg-danger">3</span>
+    </a>
+</li>
+{% endblock %}
+{% block chat %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'profiles:chat' %}">
+        Chat
     </a>
 </li>
 {% endblock %}
