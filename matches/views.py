@@ -10,4 +10,11 @@ class MatchesView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Matches'
         return context
-    
+
+class ShortListView(TemplateView):
+    template_name = 'matches/shortlist.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Shortlist'
+        return context

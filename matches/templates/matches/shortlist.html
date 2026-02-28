@@ -1,0 +1,70 @@
+{% extends "profile.html" %}
+
+{% block main %}
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .shortlist-card img {
+      height: 220px;
+      object-fit: cover;
+    }
+  </style>
+<br>
+  <!-- Page Header -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">Your Shortlist</h2>
+    <p class="text-muted">Profiles you’ve saved for consideration</p>
+  </div>
+
+  <!-- Shortlist Grid -->
+  <div class="row g-4">
+    <!-- Shortlist Card -->
+    <div class="col-md-4">
+      <div class="card shortlist-card shadow-sm">
+        <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile">
+        <div class="card-body">
+          <h5 class="card-title">Sophia Sharma, 28</h5>
+          <p class="card-text">Software Engineer | New Delhi</p>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortlist Card -->
+    <div class="col-md-4">
+      <div class="card shortlist-card shadow-sm">
+        <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Profile">
+        <div class="card-body">
+          <h5 class="card-title">Arjun Kumar, 30</h5>
+          <p class="card-text">Entrepreneur | Bangalore</p>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortlist Card -->
+    <div class="col-md-4">
+      <div class="card shortlist-card shadow-sm">
+        <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Profile">
+        <div class="card-body">
+          <h5 class="card-title">Priya Singh, 26</h5>
+          <p class="card-text">Teacher | Mumbai</p>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
+            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
