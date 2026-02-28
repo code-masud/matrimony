@@ -4,7 +4,7 @@ from services.uploads import avatar_upload_path, gallery_image_upload_path
 from services.validations import image_validation
 
 # Create your models here.
-class Profile(models.Model):
+class MatrimonyProfile(models.Model):
 
     class GenderChoices(models.TextChoices):
         MALE = "male", "Male"
@@ -26,7 +26,7 @@ class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="profile"
+        related_name="matrimony_profile"
     )
 
     # Basic Info

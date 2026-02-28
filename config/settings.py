@@ -140,10 +140,10 @@ MEDIA_ROOT = os.getenv('MEDIA_ROOT')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URLs
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'accounts:profile'
-LOGOUT_URL = 'logout'
-LOGOUT_REDIRECT_URL = 'login'
+# LOGIN_URL = 'login'
+# LOGIN_REDIRECT_URL = 'accounts:profile'
+# LOGOUT_URL = 'logout'
+# LOGOUT_REDIRECT_URL = 'login'
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'

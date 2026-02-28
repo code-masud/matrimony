@@ -2,43 +2,86 @@
 
 {% block title %} | {{ title }} {% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <!-- Carousel -->
-            <div id="demo" class="carousel slide" data-bs-ride="carousel">
-                <!-- Indicators/dots -->
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
-                </div>
-
-                <!-- The slideshow/carousel -->
-                <div class="carousel-inner">
-                   {% for carousel in carousels %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img
-                                src="{{ carousel.image.url }}"
-                                alt="{{ carousel.title }}"
-                                class="d-block"
-                                style="width: 40%"
-                            />
-                            <div class="carousel-caption">
-                                <h3>{{ carousel.title }}</h3>
-                                <p>{{ carousel.description }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Left and right controls/icons -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
-            </div>
+<!-- Hero Carousel -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    {% for carousel in carousels %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <div class="hero d-flex align-items-center justify-content-center" 
+           style="background: url('{{ carousel.image.url }}') center/cover no-repeat; height: 50vh;">
+        <div class="text-center text-white">
+          <h1 class="fw-bold">{{ carousel.title }}</h1>
+          <p class="lead">{{ carousel.description }}</p>
+          <a href="#profiles" class="btn btn-light btn-lg mt-3">Browse Profiles</a>
         </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+<!-- About Section -->
+<section id="about" class="py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">About Us</h2>
+    <p class="lead">{{ company_info.description }}</p>
+  </div>
+</section>
+
+<!-- Profiles Section -->
+<section id="profiles" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="fw-bold text-center mb-5">Featured Profiles</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile">
+          <div class="card-body">
+            <h5 class="card-title">Sophia, 28</h5>
+            <p class="card-text">Loves traveling, cooking, and family values.</p>
+            <a href="#" class="btn btn-primary">View Profile</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Profile">
+          <div class="card-body">
+            <h5 class="card-title">Arjun, 30</h5>
+            <p class="card-text">Passionate about technology and outdoor adventures.</p>
+            <a href="#" class="btn btn-primary">View Profile</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <img src="https://source.unsplash.com/400x300/?couple,love" class="card-img-top" alt="Profile">
+          <div class="card-body">
+            <h5 class="card-title">Priya, 26</h5>
+            <p class="card-text">Enjoys music, art, and cultural traditions.</p>
+            <a href="#" class="btn btn-primary">View Profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-4">Contact Us</h2>
+    <p class="lead">Have questions? Reach out to us today.</p>
+    <a href="tel:{{ company_info.phone }}" class="btn btn-outline-dark btn-lg">Call Us</a>
+    <a href="mailto:{{ company_info.email }}" class="btn btn-outline-dark btn-lg">Email Us</a>
+  </div>
+</section>
 {% endblock %}

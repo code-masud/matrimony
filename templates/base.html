@@ -2,68 +2,89 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>{{ company_info.name }} {% block title %}{% endblock %}</title>
-        <meta charset="utf-8" />
+        <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{{ company_info.name|default:"Matrimony Website"}}{% block title %}{% endblock %}</title>
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}" />
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}" />
         <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}" />
         <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}" />
+        <!-- Bootstrap 5 CSS -->
         {% bootstrap_css %}
+        <!-- Custom CSS -->
         <style>
-            .fakeimg {
+            body {
+                font-family: "Segoe UI", sans-serif;
+            }
+            .card img {
                 height: 200px;
-                background: #aaa;
+                object-fit: cover;
+            }
+            footer {
+                background: #343a40;
+                color: #fff;
+                padding: 20px 0;
             }
         </style>
     </head>
     <body>
-        <div class="bg-warning text-white text-center">
-            <p>
-                <a href="mailto:{{ company_info.email }}">{{ company_info.email }}</a> | {{ company_info.description }}
-                |
-                <a href="tel:{{ company_info.phone }}">{{ company_info.phone }}</a>
-            </p>
-        </div>
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'company:home' %}">
-                    <img src="{{ company_info.logo.url }}" alt="Avatar Logo" style="width: 30px" class="rounded-pill" />
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="/">
+                    <img
+                        src="{{ company_info.logo.url }}"
+                        alt="{{ company_info.name }}"
+                        style="width: 25px"
+                        class="rounded-pill"
+                    />
                     {{ company_info.name }}
                 </a>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Contact</a>
-                    </li>
-                    {% if request.user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_login' %}">Sign In</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
-                    </li>
-                    {% endif %}
-                </ul>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profiles:my_profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_login' %}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
         </nav>
 
-        <div class="container mt-5">
-            {% block content %}{% endblock %}
-        </div>
+        {% block content %}{% endblock %}
 
-        <div class="mt-5 p-4 bg-dark text-white text-center">
-            <address>{{ company_info.address }}</address>
-        </div>
+        <!-- Footer -->
+        <footer class="text-center">
+            <div class="container">
+                <p>&copy; 2026 {{ company_info.name|default:"Matrimony"}} . All Rights Reserved.</p>
+            </div>
+        </footer>
+
+        <!-- Bootstrap JS -->
         {% bootstrap_javascript %}
     </body>
 </html>
