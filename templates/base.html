@@ -53,15 +53,16 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
+                        {% if request.resolver_match.url_name == 'home' %}
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                        {% endif %}
+                        
                         {% if request.user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'profiles:my_profile' %}">Profile</a>
                         </li>
-                        {% block notification %}
-                        {% endblock %}
-                        {% block chat %}
+                        {% block navbar %}
                         {% endblock %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'account_logout' %}">Sign Out</a>
