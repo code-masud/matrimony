@@ -38,18 +38,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'bootstrap5',
+    'allauth',
+    'allauth.account',
+
     'company.apps.CompanyConfig',
     'accounts.apps.AccountsConfig',
     'profiles.apps.ProfilesConfig',
+    'chat.apps.ChatConfig',
     'matches.apps.MatchesConfig',
     'explore.apps.ExploreConfig',
     'notifications.apps.NotificationsConfig',
     'membership.apps.MembershipConfig',
     'payments.apps.PaymentsConfig',
-
-    'allauth',
-    'allauth.account',
 ]
 
 MIDDLEWARE = [
