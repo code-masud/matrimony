@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .terms-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+    h3 {
+      margin-top: 20px;
+    }
+  </style>
+
+<br>
+<div class="container py-5">
+
+  <!-- Page Header -->
+  <div class="text-center mb-5">
+    <h2 class="fw-bold">Terms & Privacy</h2>
+    <p class="text-muted">Please read our terms of service and privacy policy carefully</p>
+  </div>
+
+  <!-- Terms of Service -->
+  <div class="terms-card">
+    <h3 class="fw-bold">Terms of Service</h3>
+    <p>By using our matrimony platform, you agree to abide by the following terms:</p>
+    <ul>
+      <li>You must provide accurate and truthful information when creating your profile.</li>
+      <li>You are responsible for maintaining the confidentiality of your account credentials.</li>
+      <li>You agree not to misuse the platform for fraudulent or harmful activities.</li>
+      <li>We reserve the right to suspend or terminate accounts that violate our policies.</li>
+      <li>Membership fees are non-refundable once services are activated.</li>
+    </ul>
+    <p>These terms may be updated periodically. Continued use of the platform indicates acceptance of the latest terms.</p>
+  </div>
+
+  <!-- Privacy Policy -->
+  <div class="terms-card">
+    <h3 class="fw-bold">Privacy Policy</h3>
+    <p>Your privacy is important to us. This policy explains how we handle your data:</p>
+    <ul>
+      <li>We collect personal information (name, age, contact details) to provide matchmaking services.</li>
+      <li>Your data is stored securely and will not be shared with third parties without your consent.</li>
+      <li>We use cookies to improve user experience and site performance.</li>
+      <li>You may update or delete your information at any time through your profile settings.</li>
+      <li>We comply with applicable data protection laws to safeguard your information.</li>
+    </ul>
+    <p>For questions about our privacy practices, please contact our support team.</p>
+  </div>
+
+</div>
+
+{% endblock %}

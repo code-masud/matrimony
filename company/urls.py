@@ -5,4 +5,5 @@ from .views import *
 app_name = 'company'
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
+    path('terms-conditions', TermsConditionsView.as_view(), name='terms_conditions'),
 ]
