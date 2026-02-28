@@ -28,6 +28,7 @@ urlpatterns = [
     path('explore/', include('explore.urls')),
     path('notifications/', include('notifications.urls')),
     path('membership/', include('membership.urls')),
+    path('payment/', include('payments.urls')),
 ]
 
 if settings.DEBUG:

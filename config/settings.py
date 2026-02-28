@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'explore.apps.ExploreConfig',
     'notifications.apps.NotificationsConfig',
     'membership.apps.MembershipConfig',
+    'payments.apps.PaymentsConfig',
 
     'allauth',
     'allauth.account',
