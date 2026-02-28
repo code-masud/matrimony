@@ -1,12 +1,16 @@
 from django.db import models
 from services.uploads import logo_upload_path
 from services.validations import image_validation
-from phonenumber_field.modelfields import PhoneNumber
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
-class Company(models.Model):
+class CompanyInfo(models.Model):
     name = models.CharField(max_length=200)
-    phone = PhoneNumber()
+    phone = PhoneNumberField(
+        unique=True,
+        verbose_name="Phone Number",
+        null=True,
+    )
     email = models.EmailField(blank=True, null=True)
     address = models.TextField()
     logo = models.ImageField(upload_to=logo_upload_path, validators=[image_validation], blank=True, null=True)
@@ -15,3 +19,6 @@ class Company(models.Model):
     
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name_plural = 'Company Information'
