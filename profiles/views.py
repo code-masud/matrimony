@@ -7,7 +7,7 @@ User = get_user_model()
 
 # Create your views here.
 class ProfileView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
-    template_name = 'profile/index.html'
+    template_name = 'profiles/index.html'
     permission_required = ['profile.view_matrimony_profile']
 
     def get_context_data(self, **kwargs):
@@ -17,10 +17,9 @@ class ProfileView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
 
 class ProfileDetail(DetailView):
     model = User
-    template_name = 'profile/detail.html'
+    template_name = 'profiles/detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = f'Detail - {self.get_object().username}'
         return context
-    
