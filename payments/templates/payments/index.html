@@ -1,83 +1,98 @@
-{% extends 'profile.html' %}
-{% block main %}
-  <style>
+{% extends 'profile.html' %} {% block main %}
+<style>
     body {
-      background-color: #f8f9fa;
+        background-color: #f8f9fa;
     }
     .history-card {
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      background: #fff;
-      padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        background: #fff;
+        padding: 20px;
     }
     .status-paid {
-      color: #198754;
-      font-weight: bold;
+        color: #198754;
+        font-weight: bold;
     }
     .status-pending {
-      color: #ffc107;
-      font-weight: bold;
+        color: #ffc107;
+        font-weight: bold;
     }
     .status-failed {
-      color: #dc3545;
-      font-weight: bold;
+        color: #dc3545;
+        font-weight: bold;
     }
-  </style>
-<br>
-  <!-- Page Header -->
-  <div class="text-center mb-4">
+</style>
+
+<!-- Page Header -->
+<div class="text-center mb-4">
     <h2 class="fw-bold">Payment History</h2>
     <p class="text-muted">Track your past transactions and membership renewals</p>
-  </div>
+</div>
 
-  <!-- Payment History Table -->
-  <div class="history-card">
+<!-- Payment History Table -->
+<div class="history-card">
     <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Plan</th>
-          <th scope="col">Duration</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Status</th>
-          <th scope="col">Invoice</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Feb 15, 2026</td>
-          <td>Gold Membership</td>
-          <td>1 Month</td>
-          <td>$39.00</td>
-          <td class="status-paid">Paid</td>
-          <td><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-text"></i> View</button></td>
-        </tr>
-        <tr>
-          <td>Jan 15, 2026</td>
-          <td>Premium Membership</td>
-          <td>1 Month</td>
-          <td>$19.00</td>
-          <td class="status-paid">Paid</td>
-          <td><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-text"></i> View</button></td>
-        </tr>
-        <tr>
-          <td>Dec 15, 2025</td>
-          <td>Gold Membership</td>
-          <td>1 Month</td>
-          <td>$39.00</td>
-          <td class="status-failed">Failed</td>
-          <td><button class="btn btn-outline-secondary btn-sm" disabled><i class="bi bi-file-earmark-text"></i> N/A</button></td>
-        </tr>
-        <tr>
-          <td>Nov 15, 2025</td>
-          <td>Free Plan</td>
-          <td>Trial</td>
-          <td>$0.00</td>
-          <td class="status-pending">Pending</td>
-          <td><button class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-text"></i> View</button></td>
-        </tr>
-      </tbody>
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Plan</th>
+                <th scope="col">Duration</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Feb 15, 2026</td>
+                <td>Gold Membership</td>
+                <td>1 Month</td>
+                <td>$39.00</td>
+                <td class="status-paid">Paid</td>
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-file-earmark-text"></i> View
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>Jan 15, 2026</td>
+                <td>Premium Membership</td>
+                <td>1 Month</td>
+                <td>$19.00</td>
+                <td class="status-paid">Paid</td>
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-file-earmark-text"></i> View
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>Dec 15, 2025</td>
+                <td>Gold Membership</td>
+                <td>1 Month</td>
+                <td>$39.00</td>
+                <td class="status-failed">Failed</td>
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm" disabled>
+                        <i class="bi bi-file-earmark-text"></i> N/A
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>Nov 15, 2025</td>
+                <td>Free Plan</td>
+                <td>Trial</td>
+                <td>$0.00</td>
+                <td class="status-pending">Pending</td>
+                <td>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-file-earmark-text"></i> View
+                    </button>
+                </td>
+            </tr>
+        </tbody>
     </table>
-  </div>
+</div>
 
 {% endblock %}
