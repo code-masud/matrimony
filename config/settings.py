@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "django.middleware.locale.LocaleMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -123,11 +125,20 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+LANGUAGE_CODE = 'en'
 USE_I18N = True
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("bn", _("Bengali")),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale",
+]
 
 USE_TZ = True
 
