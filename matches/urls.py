@@ -3,6 +3,6 @@ from .views import *
 
 app_name='matches'
 urlpatterns = [
-    path('matches/', MatchesView.as_view(), name='my_match'),
+    path('', MatchesView.as_view(), name='my_match'),
     path('shortlist/', ShortListView.as_view(), name='my_shortlist'),
 ]
