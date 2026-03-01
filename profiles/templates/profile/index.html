@@ -1,11 +1,16 @@
 {% extends "profile.html" %}
 {% block main %}
+{% load static %}
     <br>
     <!-- Profile Header -->
     <div class="profile-header">
-        <img src="https://source.unsplash.com/200x200/?portrait" alt="User Photo" />
-        <h2 class="mt-3">Sophia Sharma</h2>
-        <p class="lead">28 | Software Engineer | New Delhi</p>
+        {% if request.user.matrimony_profile.profile_picture %}
+        <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
+        {% else %}
+        <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
+        {% endif %}
+        <h2 class="mt-3">{{ request.user.get_full_name|default:"NA" }}</h2>
+        <p class="lead">{{ request.user.matrimony_profile.date_of_birth|default:"NA" }} | {{ request.user.matrimony_profile.occupation|default:"NA" }} | {{ request.user.matrimony_profile.country|default:"NA" }}</p>
         <button class="btn btn-light btn-sm">Update Profile</button>
     </div>
     <br>
@@ -16,11 +21,11 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-header fw-bold">Personal Information</div>
                 <div class="card-body">
-                    <p><strong>Email:</strong> sophia@example.com</p>
-                    <p><strong>Phone:</strong> +91 9876543210</p>
-                    <p><strong>Education:</strong> B.Tech in Computer Science</p>
-                    <p><strong>Religion:</strong> Hindu</p>
-                    <p><strong>Location:</strong> New Delhi, India</p>
+                    <p><strong>Email:</strong> {{ request.user.email|default:"NA" }}</p>
+                    <p><strong>Phone:</strong> {{ request.user.phone|default:"NA" }}</p>
+                    <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
+                    <p><strong>Religion:</strong> {{ request.user.matrimony_profile.religion|default:"NA" }}</p>
+                    <p><strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{ request.user.matrimony_profile.country|default:"NA" }}</p>
                     <button class="btn btn-outline-primary btn-sm">Edit Info</button>
                 </div>
             </div>
@@ -29,10 +34,10 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-header fw-bold">Partner Preference</div>
                 <div class="card-body">
-                    <p><strong>Age Range:</strong> 27 - 32</p>
-                    <p><strong>Education:</strong> Graduate or above</p>
-                    <p><strong>Religion:</strong> Hindu</p>
-                    <p><strong>Location Preference:</strong> India</p>
+                    <p><strong>Age Range:</strong> {{ request.user.partner_preference.min_age|default:"NA" }} - {{ request.user.partner_preference.max_age|default:"NA" }}</p>
+                    <p><strong>Education:</strong> {{ request.user.partner_preference.education|default:"NA" }}</p>
+                    <p><strong>Religion:</strong> {{ request.user.partner_preference.religion|default:"NA" }}</p>
+                    <p><strong>Location Preference:</strong> {{ request.user.partner_preference.country|default:"NA" }}</p>
                     <button class="btn btn-outline-primary btn-sm">Update Preference</button>
                 </div>
             </div>
