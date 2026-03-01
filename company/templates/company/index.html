@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% block title %} | {{ title }} {% endblock %}
 {% block content %}
 <!-- Hero Carousel -->
@@ -31,7 +31,7 @@
 <!-- About Section -->
 <section id="about" class="py-5">
   <div class="container text-center">
-    <h2 class="fw-bold mb-4">About Us</h2>
+    <h2 class="fw-bold mb-4">{% trans "About Us" %}</h2>
     <p class="lead">{{ company_info.description }}</p>
   </div>
 </section>
@@ -39,7 +39,7 @@
 <!-- Profiles Section -->
 <section id="profiles" class="py-5 bg-light">
   <div class="container">
-    <h2 class="fw-bold text-center mb-5">Featured Profiles</h2>
+    <h2 class="fw-bold text-center mb-5">{% trans "Featured Profiles" %}</h2>
     <div class="row g-4">
       <div class="col-md-4">
         <div class="card shadow-sm">
@@ -78,10 +78,10 @@
 <!-- Contact Section -->
 <section id="contact" class="py-5">
   <div class="container text-center">
-    <h2 class="fw-bold mb-4">Contact Us</h2>
-    <p class="lead">Have questions? Reach out to us today.</p>
-    <a href="tel:{{ company_info.phone }}" class="btn btn-outline-dark btn-lg">Call Us</a>
-    <a href="mailto:{{ company_info.email }}" class="btn btn-outline-dark btn-lg">Email Us</a>
+    <h2 class="fw-bold mb-4">{% trans "Contact Us" %}</h2>
+    <p class="lead">{% trans "Have questions? Reach out to us today." %}</p>
+    <a href="tel:{{ company_info.phone }}" class="btn btn-outline-dark btn-lg">{% trans "Call Us" %}</a>
+    <a href="mailto:{{ company_info.email }}" class="btn btn-outline-dark btn-lg">{% trans "Email Us" %}</a>
   </div>
 </section>
 {% endblock %}
