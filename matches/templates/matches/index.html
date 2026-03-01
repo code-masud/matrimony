@@ -1,99 +1,97 @@
-{% extends "profile.html" %}
-
-{% block main %}
-  <style>
+{% extends "profile.html" %} {% block main %}
+<style>
     body {
-      background-color: #f8f9fa;
+        background-color: #f8f9fa;
     }
     .match-card img {
-      height: 220px;
-      object-fit: cover;
+        height: 220px;
+        object-fit: cover;
     }
     .filter-bar {
-      background: #fff;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
-  </style>
-  <br>
-  <!-- Page Header -->
-  <div class="text-center mb-4">
+</style>
+
+<!-- Page Header -->
+<div class="text-center mb-4">
     <h2 class="fw-bold">Your Matches</h2>
     <p class="text-muted">Based on your preferences and interests</p>
-  </div>
+</div>
 
-  <!-- Filter Bar -->
-  <div class="filter-bar d-flex flex-wrap justify-content-between align-items-center">
+<!-- Filter Bar -->
+<div class="filter-bar d-flex flex-wrap justify-content-between align-items-center">
     <div class="d-flex gap-2">
-      <select class="form-select">
-        <option selected>Age Range</option>
-        <option>25-30</option>
-        <option>30-35</option>
-        <option>35-40</option>
-      </select>
-      <select class="form-select">
-        <option selected>Location</option>
-        <option>Dhaka</option>
-        <option>Delhi</option>
-        <option>Mumbai</option>
-      </select>
-      <select class="form-select">
-        <option selected>Religion</option>
-        <option>Hindu</option>
-        <option>Muslim</option>
-        <option>Christian</option>
-      </select>
+        <select class="form-select">
+            <option selected>Age Range</option>
+            <option>25-30</option>
+            <option>30-35</option>
+            <option>35-40</option>
+        </select>
+        <select class="form-select">
+            <option selected>Location</option>
+            <option>Dhaka</option>
+            <option>Delhi</option>
+            <option>Mumbai</option>
+        </select>
+        <select class="form-select">
+            <option selected>Religion</option>
+            <option>Hindu</option>
+            <option>Muslim</option>
+            <option>Christian</option>
+        </select>
     </div>
     <button class="btn btn-primary"><i class="bi bi-funnel"></i> Apply Filters</button>
-  </div>
+</div>
 
-  <!-- Matches Grid -->
-  <div class="row g-4">
+<!-- Matches Grid -->
+<div class="row g-4">
     <!-- Match Card -->
     <div class="col-md-4">
-      <div class="card match-card shadow-sm">
-        <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Match">
-        <div class="card-body">
-          <h5 class="card-title">Sophia Sharma, 28</h5>
-          <p class="card-text">Software Engineer | New Delhi</p>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-          </div>
+        <div class="card match-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Match" />
+            <div class="card-body">
+                <h5 class="card-title">Sophia Sharma, 28</h5>
+                <p class="card-text">Software Engineer | New Delhi</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Match Card -->
     <div class="col-md-4">
-      <div class="card match-card shadow-sm">
-        <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Match">
-        <div class="card-body">
-          <h5 class="card-title">Arjun Kumar, 30</h5>
-          <p class="card-text">Entrepreneur | Bangalore</p>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-          </div>
+        <div class="card match-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Match" />
+            <div class="card-body">
+                <h5 class="card-title">Arjun Kumar, 30</h5>
+                <p class="card-text">Entrepreneur | Bangalore</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <!-- Match Card -->
     <div class="col-md-4">
-      <div class="card match-card shadow-sm">
-        <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Match">
-        <div class="card-body">
-          <h5 class="card-title">Priya Singh, 26</h5>
-          <p class="card-text">Teacher | Mumbai</p>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-          </div>
+        <div class="card match-card shadow-sm">
+            <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Match" />
+            <div class="card-body">
+                <h5 class="card-title">Priya Singh, 26</h5>
+                <p class="card-text">Teacher | Mumbai</p>
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 {% endblock %}
