@@ -1,0 +1,69 @@
+{% extends 'profile.html' %} {% block main %}
+<style>
+    .profile-photo {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #dee2e6;
+    }
+    .section-title {
+        font-weight: bold;
+        margin-top: 20px;
+    }
+</style>
+<div class="row align-items-center">
+    <!-- Profile Photo -->
+    <div class="col-md-3 text-center">
+        <img src="https://source.unsplash.com/200x200/?woman,portrait" alt="Profile Photo" class="profile-photo mb-3" />
+        <div class="d-flex justify-content-center gap-2">
+            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+            <button class="btn btn-outline-success btn-sm"><i class="bi bi-chat"></i> Chat</button>
+        </div>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="col-md-9">
+        <h3 class="fw-bold">Sophia Sharma, 28</h3>
+        <p class="text-muted">Software Engineer | New Delhi</p>
+        <p><i class="bi bi-mortarboard"></i> Education: B.Tech in Computer Science</p>
+        <p><i class="bi bi-briefcase"></i> Profession: Senior Developer at TechCorp</p>
+        <p><i class="bi bi-geo-alt"></i> Location: New Delhi, India</p>
+        <p><i class="bi bi-heart-fill text-danger"></i> Religion: Hindu</p>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="mt-4">
+    <h5 class="section-title">About Me</h5>
+    <p>
+        I am passionate about technology, traveling, and cooking. I value honesty and kindness, and I am looking for a
+        partner who shares similar values.
+    </p>
+</div>
+
+<!-- Partner Preferences -->
+<div class="mt-4">
+    <h5 class="section-title">Partner Preferences</h5>
+    <ul>
+        <li>Age Range: 28–32</li>
+        <li>Education: Graduate or higher</li>
+        <li>Location: India (preferably metro cities)</li>
+        <li>Values: Respectful, caring, and family-oriented</li>
+    </ul>
+</div>
+
+<!-- Gallery -->
+<div class="mt-4">
+    <h5 class="section-title">Gallery</h5>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <img src="https://source.unsplash.com/400x300/?portrait" class="img-fluid rounded" />
+        </div>
+        <div class="col-md-4"><img src="https://source.unsplash.com/400x300/?smile" class="img-fluid rounded" /></div>
+        <div class="col-md-4"><img src="https://source.unsplash.com/400x300/?travel" class="img-fluid rounded" /></div>
+    </div>
+</div>
+
+{% endblock %}

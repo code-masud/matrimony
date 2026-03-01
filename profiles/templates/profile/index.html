@@ -1,6 +1,4 @@
-{% extends "profile.html" %}
-{% block main %}
-{% load static %}
+{% extends "profile.html" %} {% block main %} {% load static %}
 <style>
     body {
         background-color: #f8f9fa;
@@ -23,122 +21,123 @@
         object-fit: cover;
     }
 </style>
-    <br>
-    <!-- Profile Header -->
-    <div class="profile-header">
-        {% if request.user.matrimony_profile.profile_picture %}
-        <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
-        {% else %}
-        <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
-        {% endif %}
-        <h2 class="mt-3">{{ request.user.get_full_name|default:"NA" }}</h2>
-        <p class="lead">{{ request.user.matrimony_profile.date_of_birth|default:"NA" }} | {{ request.user.matrimony_profile.occupation|default:"NA" }} | {{ request.user.matrimony_profile.country|default:"NA" }}</p>
-        <button class="btn btn-light btn-sm">Update Profile</button>
-    </div>
-    <br>
-    <div class="row">
-        <!-- Left Column -->
-        <div class="col-md-8">
-            <!-- Personal Information -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header fw-bold">Personal Information</div>
-                <div class="card-body">
-                    <p><strong>Email:</strong> {{ request.user.email|default:"NA" }}</p>
-                    <p><strong>Phone:</strong> {{ request.user.phone|default:"NA" }}</p>
-                    <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
-                    <p><strong>Religion:</strong> {{ request.user.matrimony_profile.religion|default:"NA" }}</p>
-                    <p><strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{ request.user.matrimony_profile.country|default:"NA" }}</p>
-                    <button class="btn btn-outline-primary btn-sm">Edit Info</button>
-                </div>
-            </div>
-
-            <!-- Partner Preference -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header fw-bold">Partner Preference</div>
-                <div class="card-body">
-                    <p><strong>Age Range:</strong> {{ request.user.partner_preference.min_age|default:"NA" }} - {{ request.user.partner_preference.max_age|default:"NA" }}</p>
-                    <p><strong>Education:</strong> {{ request.user.partner_preference.education|default:"NA" }}</p>
-                    <p><strong>Religion:</strong> {{ request.user.partner_preference.religion|default:"NA" }}</p>
-                    <p><strong>Location Preference:</strong> {{ request.user.partner_preference.country|default:"NA" }}</p>
-                    <button class="btn btn-outline-primary btn-sm">Update Preference</button>
-                </div>
-            </div>
-
-            <!-- Interest Requests -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header fw-bold">Interest Requests</div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Arjun Kumar (30, Bangalore)
-                            <div>
-                                <button class="btn btn-success btn-sm">Accept</button>
-                                <button class="btn btn-danger btn-sm">Decline</button>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Priya Singh (26, Mumbai)
-                            <div>
-                                <button class="btn btn-success btn-sm">Accept</button>
-                                <button class="btn btn-danger btn-sm">Decline</button>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Shortlist -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header fw-bold">Shortlist</div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">Rahul Mehta (29, Pune)</li>
-                        <li class="list-group-item">Ananya Gupta (27, Delhi)</li>
-                    </ul>
-                    <button class="btn btn-outline-primary btn-sm mt-2">Manage Shortlist</button>
-                </div>
+<!-- Profile Header -->
+<div class="profile-header">
+    {% if request.user.matrimony_profile.profile_picture %}
+    <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
+    {% else %}
+    <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
+    {% endif %}
+    <h2 class="mt-3">{{ request.user.get_full_name|default:"NA" }}</h2>
+    <p class="lead">
+        {{ request.user.matrimony_profile.date_of_birth|default:"NA" }} | {{
+        request.user.matrimony_profile.occupation|default:"NA" }} | {{
+        request.user.matrimony_profile.country|default:"NA" }}
+    </p>
+    <button class="btn btn-light btn-sm">Update Profile</button>
+</div>
+<br />
+<div class="row">
+    <!-- Left Column -->
+    <div class="col-md-8">
+        <!-- Personal Information -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header fw-bold">Personal Information</div>
+            <div class="card-body">
+                <p><strong>Email:</strong> {{ request.user.email|default:"NA" }}</p>
+                <p><strong>Phone:</strong> {{ request.user.phone|default:"NA" }}</p>
+                <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
+                <p><strong>Religion:</strong> {{ request.user.matrimony_profile.religion|default:"NA" }}</p>
+                <p>
+                    <strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{
+                    request.user.matrimony_profile.country|default:"NA" }}
+                </p>
+                <button class="btn btn-outline-primary btn-sm">Edit Info</button>
             </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="col-md-4">
-            <!-- Gallery -->
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">Photo Gallery</div>
-                <div class="card-body gallery">
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <img
-                                src="https://source.unsplash.com/300x300/?woman"
-                                class="img-fluid rounded"
-                                alt="Gallery"
-                            />
+        <!-- Partner Preference -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header fw-bold">Partner Preference</div>
+            <div class="card-body">
+                <p>
+                    <strong>Age Range:</strong> {{ request.user.partner_preference.min_age|default:"NA" }} - {{
+                    request.user.partner_preference.max_age|default:"NA" }}
+                </p>
+                <p><strong>Education:</strong> {{ request.user.partner_preference.education|default:"NA" }}</p>
+                <p><strong>Religion:</strong> {{ request.user.partner_preference.religion|default:"NA" }}</p>
+                <p><strong>Location Preference:</strong> {{ request.user.partner_preference.country|default:"NA" }}</p>
+                <button class="btn btn-outline-primary btn-sm">Update Preference</button>
+            </div>
+        </div>
+
+        <!-- Interest Requests -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header fw-bold">Interest Requests</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Arjun Kumar (30, Bangalore)
+                        <div>
+                            <button class="btn btn-success btn-sm">Accept</button>
+                            <button class="btn btn-danger btn-sm">Decline</button>
                         </div>
-                        <div class="col-6">
-                            <img
-                                src="https://source.unsplash.com/300x300/?smile"
-                                class="img-fluid rounded"
-                                alt="Gallery"
-                            />
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Priya Singh (26, Mumbai)
+                        <div>
+                            <button class="btn btn-success btn-sm">Accept</button>
+                            <button class="btn btn-danger btn-sm">Decline</button>
                         </div>
-                        <div class="col-6">
-                            <img
-                                src="https://source.unsplash.com/300x300/?portrait"
-                                class="img-fluid rounded"
-                                alt="Gallery"
-                            />
-                        </div>
-                        <div class="col-6">
-                            <img
-                                src="https://source.unsplash.com/300x300/?fashion"
-                                class="img-fluid rounded"
-                                alt="Gallery"
-                            />
-                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Shortlist -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header fw-bold">Shortlist</div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item">Rahul Mehta (29, Pune)</li>
+                    <li class="list-group-item">Ananya Gupta (27, Delhi)</li>
+                </ul>
+                <button class="btn btn-outline-primary btn-sm mt-2">Manage Shortlist</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-md-4">
+        <!-- Gallery -->
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">Photo Gallery</div>
+            <div class="card-body gallery">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <img src="https://source.unsplash.com/300x300/?woman" class="img-fluid rounded" alt="Gallery" />
                     </div>
-                    <button class="btn btn-outline-primary btn-sm mt-3">Upload Photo</button>
+                    <div class="col-6">
+                        <img src="https://source.unsplash.com/300x300/?smile" class="img-fluid rounded" alt="Gallery" />
+                    </div>
+                    <div class="col-6">
+                        <img
+                            src="https://source.unsplash.com/300x300/?portrait"
+                            class="img-fluid rounded"
+                            alt="Gallery"
+                        />
+                    </div>
+                    <div class="col-6">
+                        <img
+                            src="https://source.unsplash.com/300x300/?fashion"
+                            class="img-fluid rounded"
+                            alt="Gallery"
+                        />
+                    </div>
                 </div>
+                <button class="btn btn-outline-primary btn-sm mt-3">Upload Photo</button>
             </div>
         </div>
     </div>
-{% endblock  %}
+</div>
+{% endblock %}

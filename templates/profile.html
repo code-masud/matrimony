@@ -1,8 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %} {{ title }} {% endblock %}
-
-{% block navbar %}
+{% extends "base.html" %} {% block title %} {{ title }} {% endblock %} {% block navbar %}
+<style>
+    .profile-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+    }
+</style>
 <li class="nav-item">
     <a class="nav-link" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#notificationModal">
         Notifications
@@ -10,37 +14,24 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'chat:my_chat' %}">
-        Chat
-    </a>
+    <a class="nav-link" href="{% url 'chat:my_chat' %}"> Chat </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'matches:my_match' %}">
-        Matches
-    </a>
+    <a class="nav-link" href="{% url 'matches:my_match' %}"> Matches </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'matches:my_shortlist' %}">
-        Shortlist
-    </a>
+    <a class="nav-link" href="{% url 'matches:my_shortlist' %}"> Shortlist </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'explore:my_explore' %}">
-        Explore
-    </a>
+    <a class="nav-link" href="{% url 'explore:my_explore' %}"> Explore </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'membership:my_membership' %}">
-        Membership
-    </a>
+    <a class="nav-link" href="{% url 'membership:my_membership' %}"> Membership </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'payments:my_payment' %}">
-        Payment
-    </a>
+    <a class="nav-link" href="{% url 'payments:my_payment' %}"> Payment </a>
 </li>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <!-- Main Content -->
 <div class="container my-5">
     <!-- Notification Modal -->
@@ -74,13 +65,15 @@
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <a href="{% url 'notifications:my_notification' %}" type="button" class="btn btn-primary">See All</a>
+                    <a href="{% url 'notifications:my_notification' %}" type="button" class="btn btn-primary"
+                        >See All</a
+                    >
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-
-    {% block main %}{% endblock %}
+    <br />
+    <div class="profile-card">{% block main %}{% endblock %}</div>
 </div>
 {% endblock %}
