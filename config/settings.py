@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "django.middleware.locale.LocaleMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -127,9 +127,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 TIME_ZONE = 'UTC'
-
 LANGUAGE_CODE = 'en'
 USE_I18N = True
+USE_L10N = True
+USE_TZ = True
 
 LANGUAGES = [
     ("en", _("English")),
@@ -137,10 +138,10 @@ LANGUAGES = [
 ]
 
 LOCALE_PATHS = [
-    BASE_DIR / "locale",
+    os.path.join(BASE_DIR, 'locale'),
 ]
 
-USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
