@@ -113,5 +113,12 @@
         <!-- Bootstrap JS -->
         {% bootstrap_javascript %}
         <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <script>
+            var myModalEl  = document.getElementById("exampleModal");
+            document.body.addEventListener("closeModal", () => {
+                const modalInstance = bootstrap.Modal.getInstance(myModalEl);
+                modalInstance.hide();
+            });
+        </script>
     </body>
 </html>

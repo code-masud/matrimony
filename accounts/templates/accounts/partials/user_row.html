@@ -1,0 +1,7 @@
+<div id="user-info">
+    <h2 class="mt-3">{{ request.user.get_full_name|default:"NA" }} ({{ request.user.on_behalf|default:"Self" }})</h2>
+    <p class="lead">
+        {{ request.user.email|default:"NA" }} | {{ request.user.phone|default:"NA" }}
+    </p>
+    <button hx-get="{% url 'accounts:update_user' user.id %}" hx-target='#modal-body' class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">Update Profile</button>
+</div>

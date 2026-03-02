@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
 
+    "crispy_forms",
+    "crispy_bootstrap5",
+
     'company.apps.CompanyConfig',
     'accounts.apps.AccountsConfig',
     'profiles.apps.ProfilesConfig',
@@ -185,3 +188,5 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 SESSION_COOKIE_AGE = int(os.getenv('SESSION_COOKIE_AGE', 86400))
 SESSION_SAVE_EVERY_REQUEST = os.getenv('SESSION_SAVE_EVERY_REQUEST') == 'True'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

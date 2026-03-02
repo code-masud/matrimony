@@ -23,34 +23,37 @@
 </style>
 <!-- Profile Header -->
 <div class="profile-header">
+    {% load static %}
     {% if request.user.matrimony_profile.profile_picture %}
     <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
     {% else %}
     <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
     {% endif %}
-    <h2 class="mt-3">{{ request.user.get_full_name|default:"NA" }}</h2>
-    <p class="lead">
-        {{ request.user.matrimony_profile.date_of_birth|default:"NA" }} | {{ request.user.matrimony_profile.occupation|default:"NA" }} | {{ request.user.matrimony_profile.country|default:"NA" }}
-    </p>
-    <button class="btn btn-light btn-sm">Update Profile</button>
+    {% include 'accounts/partials/user_row.html' %}
 </div>
 <br />
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="row">
     <!-- Left Column -->
     <div class="col-md-8">
         <!-- Personal Information -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header fw-bold">Personal Information</div>
-            <div class="card-body">
-                <p><strong>Email:</strong> {{ request.user.email|default:"NA" }}</p>
-                <p><strong>Phone:</strong> {{ request.user.phone|default:"NA" }}</p>
-                <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
-                <p><strong>Religion:</strong> {{ request.user.matrimony_profile.religion|default:"NA" }}</p>
-                <p>
-                    <strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{ request.user.matrimony_profile.country|default:"NA" }}
-                </p>
-                <p>Joined on: {{ user.date_joined|date:"d F Y, P"|localize }}</p>
-                <button class="btn btn-outline-primary btn-sm">Edit Info</button>
+            <div class="card-body" id="personal-info">
+                {% include 'accounts/partials/display_personal_info.html' %}
             </div>
         </div>
 

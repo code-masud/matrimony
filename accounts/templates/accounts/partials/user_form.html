@@ -1,0 +1,6 @@
+<form hx-post="{% url 'accounts:update_user' user.id %}" hx-target='#user-info' hx-swap='outerHTML'>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>
