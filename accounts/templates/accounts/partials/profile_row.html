@@ -1,0 +1,10 @@
+<div id="profile-info">
+    <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
+    <p><strong>Occupation:</strong> {{ request.user.matrimony_profile.occupation|default:"NA" }}</p>
+    <p><strong>Status:</strong> {{ request.user.matrimony_profile.marital_status|default:"NA" }}</p>
+    <p><strong>Religion:</strong> {{ request.user.matrimony_profile.religion|default:"NA" }}</p>
+    <p>
+        <strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{ request.user.matrimony_profile.country|default:"NA" }}
+    </p>
+    <button hx-get="{% if request.user.matrimony_profile.id %}{% url 'accounts:update_profile' request.user.matrimony_profile.id %}{% else %}{% url 'accounts:create_profile' %}{% endif %}" hx-target='#modal-body' class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit Info</button>
+</div>
