@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from .models import User
 from profiles.models import MatrimonyProfile, PartnerPreference, ProfilePhoto
+from django.forms import inlineformset_factory
 
 class CustomUserChangeForm(forms.ModelForm):
     class Meta:
@@ -72,3 +73,8 @@ class ProfilePhotoForm(forms.ModelForm):
     class Meta:
         model = MatrimonyProfile
         fields = ['profile_picture']
+
+class GalleryImageForm(forms.ModelForm):
+    class Meta:
+        model = ProfilePhoto
+        fields = ['image', 'is_primary']

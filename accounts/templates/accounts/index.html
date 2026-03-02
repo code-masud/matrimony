@@ -102,29 +102,13 @@
         <div class="card shadow-sm">
             <div class="card-header fw-bold">Photo Gallery</div>
             <div class="card-body gallery">
-                <div class="row g-2">
-                    <div class="col-6">
-                        <img src="https://source.unsplash.com/300x300/?woman" class="img-fluid rounded" alt="Gallery" />
-                    </div>
-                    <div class="col-6">
-                        <img src="https://source.unsplash.com/300x300/?smile" class="img-fluid rounded" alt="Gallery" />
-                    </div>
-                    <div class="col-6">
-                        <img
-                            src="https://source.unsplash.com/300x300/?portrait"
-                            class="img-fluid rounded"
-                            alt="Gallery"
-                        />
-                    </div>
-                    <div class="col-6">
-                        <img
-                            src="https://source.unsplash.com/300x300/?fashion"
-                            class="img-fluid rounded"
-                            alt="Gallery"
-                        />
-                    </div>
+                <div class="row g-2" id="gallery">
+                    {% for photo in request.user.photos.all %}
+                        {% include 'accounts/partials/gallery_row.html' %}
+                    {% endfor %}
                 </div>
-                <button class="btn btn-outline-primary btn-sm mt-3">Upload Photo</button>
+                <br>
+                <button hx-get="{% url 'accounts:create_gallery' request.user.id %}" hx-target='#modal-body' class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-primary btn-sm mt-3">Upload Photo</button>
             </div>
         </div>
     </div>

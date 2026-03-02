@@ -4,6 +4,8 @@ from .views import *
 app_name='accounts'
 urlpatterns = [
     path('user/<int:pk>/update/', UpdateUser.as_view(), name="update_user"),
+    path('user/<int:pk>/gallery/', GalleryCreate.as_view(), name="create_gallery"),
+    path('gallery/<int:pk>/update/', GalleryUpdate.as_view(), name="update_gallery"),
     path('profile/', MyProfile.as_view(), name="my_profile"),
     path('profile/create/', CreateMatrimonyProfile.as_view(), name="create_profile"),
     path('profile/<int:pk>/image/', UpdateProfileImage.as_view(), name="profile_image"),
