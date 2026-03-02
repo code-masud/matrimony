@@ -6,7 +6,6 @@ from .models import User
 from profiles.models import MatrimonyProfile, PartnerPreference
 from .forms import CustomUserChangeForm, MatrimonyProfileForm, PartnerPreferenceForm, ProfilePhotoForm
 
-
 # Create your views here.
 class MyProfile(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'accounts/index.html'
@@ -37,6 +36,16 @@ class UpdateUser(HtmxFormMixin, UpdateView):
     form_class = CustomUserChangeForm
     row_template = 'accounts/partials/user_row.html'
     context_object_name = 'user'
+    success_url = reverse_lazy('accounts:my_profile')
+    permission_required = ['accounts:add_user']
+    htmx_trigger = 'closeModal'
+
+class UpdateProfileImage(HtmxFormMixin, UpdateView):
+    model = MatrimonyProfile
+    template_name = 'accounts/partials/profile_image_form.html'
+    form_class = ProfilePhotoForm
+    row_template = 'accounts/partials/profile_image_row.html'
+    context_object_name = 'profile'
     success_url = reverse_lazy('accounts:my_profile')
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'

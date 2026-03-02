@@ -1,0 +1,11 @@
+<div id="profile-image">
+    {% load static %}
+    {% if request.user.matrimony_profile.profile_picture %}
+    <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
+    {% else %}
+    <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
+    {% endif %}
+    {% if request.user.matrimony_profile.id %}
+    <button hx-get="{% url 'accounts:profile_image' request.user.matrimony_profile.id %}" hx-target='#modal-body' class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-image-alt"></i></button>
+    {% endif %}
+</div>

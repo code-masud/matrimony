@@ -1,0 +1,6 @@
+<form hx-post="{% url 'accounts:profile_image' request.user.matrimony_profile.id %}" hx-target='#profile-image' hx-swap='outerHTML' enctype="multipart/form-data">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" type="submit">Update</button>
+</form>

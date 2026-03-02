@@ -70,5 +70,5 @@ class PartnerPreferenceForm(forms.ModelForm):
 
 class ProfilePhotoForm(forms.ModelForm):
     class Meta:
-        model = ProfilePhoto
-        fields = ['image', 'is_primary']
+        model = MatrimonyProfile
+        fields = ['profile_picture']

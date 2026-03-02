@@ -23,12 +23,7 @@
 </style>
 <!-- Profile Header -->
 <div class="profile-header">
-    {% load static %}
-    {% if request.user.matrimony_profile.profile_picture %}
-    <img src="{{ request.user.matrimony_profile.profile_picture.url }}" alt="{{ request.user.get_username}} Photo" />
-    {% else %}
-    <img src="{% static 'avatar/male.png' %}" alt="{{ request.user.get_username}} Photo" />
-    {% endif %}
+    {% include 'accounts/partials/profile_image_row.html' %}
     {% include 'accounts/partials/user_row.html' %}
 </div>
 <br />
