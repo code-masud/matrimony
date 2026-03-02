@@ -52,7 +52,7 @@
         <!-- Personal Information -->
         <div class="card mb-4 shadow-sm">
             <div class="card-header fw-bold">Personal Information</div>
-            <div class="card-body" id="personal-info">
+            <div class="card-body">
                 {% include 'accounts/partials/profile_row.html' %}
             </div>
         </div>
@@ -61,13 +61,7 @@
         <div class="card mb-4 shadow-sm">
             <div class="card-header fw-bold">Partner Preference</div>
             <div class="card-body">
-                <p>
-                    <strong>Age Range:</strong> {{ request.user.partner_preference.min_age|default:"NA" }} - {{ request.user.partner_preference.max_age|default:"NA" }}
-                </p>
-                <p><strong>Education:</strong> {{ request.user.partner_preference.education|default:"NA" }}</p>
-                <p><strong>Religion:</strong> {{ request.user.partner_preference.religion|default:"NA" }}</p>
-                <p><strong>Location Preference:</strong> {{ request.user.partner_preference.country|default:"NA" }}</p>
-                <button class="btn btn-outline-primary btn-sm">Update Preference</button>
+                {% include 'accounts/partials/preference_row.html' %}
             </div>
         </div>
 

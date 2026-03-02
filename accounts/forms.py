@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from .models import User
-from profiles.models import MatrimonyProfile
+from profiles.models import MatrimonyProfile, PartnerPreference, ProfilePhoto
 
 class CustomUserChangeForm(forms.ModelForm):
     class Meta:
@@ -36,3 +36,39 @@ class MatrimonyProfileForm(forms.ModelForm):
                 attrs={"class": "form-control", "step": "0.01"}
             ),
         }
+
+class PartnerPreferenceForm(forms.ModelForm):
+    class Meta:
+        model = PartnerPreference
+        fields = [
+            'min_age',
+            'max_age',
+            'min_height_cm',
+            'max_height_cm',
+            'religion',
+            'marital_status',
+            'country',
+            'city',
+            'education',
+            'occupation',
+        ]
+
+        widgets = {
+            "min_age": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01"}
+            ),
+            "max_age": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01"}
+            ),
+            "min_height_cm": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01"}
+            ),
+            "max_height_cm": forms.NumberInput(
+                attrs={"class": "form-control", "step": "0.01"}
+            ),
+        }
+
+class ProfilePhotoForm(forms.ModelForm):
+    class Meta:
+        model = ProfilePhoto
+        fields = ['image', 'is_primary']

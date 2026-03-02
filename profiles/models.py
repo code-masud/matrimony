@@ -106,8 +106,16 @@ class PartnerPreference(models.Model):
     max_height_cm = models.PositiveIntegerField(blank=True, null=True)
 
     # Basic Filters
-    religion = models.CharField(max_length=50, blank=True)
-    marital_status = models.CharField(max_length=50, blank=True)
+    religion = models.CharField(
+        max_length=20,
+        choices=MatrimonyProfile.ReligionChoices.choices,
+        db_index=True
+    )
+    marital_status = models.CharField(
+        max_length=20,
+        choices=MatrimonyProfile.MaritalStatusChoices.choices,
+        db_index=True
+    )
     country = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
 

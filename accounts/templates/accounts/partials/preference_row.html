@@ -1,0 +1,9 @@
+<div id="preference-info">
+    <p>
+        <strong>Age Range:</strong> {{ request.user.partner_preference.min_age|default:"NA" }} - {{ request.user.partner_preference.max_age|default:"NA" }}
+    </p>
+    <p><strong>Education:</strong> {{ request.user.partner_preference.education|default:"NA" }}</p>
+    <p><strong>Religion:</strong> {{ request.user.partner_preference.religion|default:"NA" }}</p>
+    <p><strong>Location Preference:</strong> {{ request.user.partner_preference.country|default:"NA" }}</p>
+    <button hx-get="{% if request.user.partner_preference.id %}{% url 'accounts:update_preference' request.user.partner_preference.id %}{% else %}{% url 'accounts:create_preference' %}{% endif %}" hx-target='#modal-body' class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">Update Preference</button>
+</div>

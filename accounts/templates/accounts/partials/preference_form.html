@@ -1,0 +1,6 @@
+<form hx-post="{% if request.user.partner_preference.id %}{% url 'accounts:update_preference' request.user.partner_preference.id %}{% else %}{% url 'accounts:create_preference' %}{% endif %}" hx-target='#preference-info' hx-swap='outerHTML'>
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {{ form|crispy }}
+    <button class="btn btn-primary" type="submit">Update</button>
+</form>
