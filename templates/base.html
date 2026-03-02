@@ -81,7 +81,7 @@
                         
                         {% if request.user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profiles:my_profile' %}">{% trans "Profile" %}</a>
+                            <a class="nav-link" href="{% url 'accounts:my_profile' %}">{% trans "Profile" %}</a>
                         </li>
                         {% block navbar %}
                         {% endblock %}

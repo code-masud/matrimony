@@ -34,6 +34,7 @@ urlpatterns = [
 # 2. URLs that NEED language prefixes (e.g., /es/admin/, /fr/chat/)
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
     
     # App inclusions
