@@ -1,4 +1,4 @@
-{% extends "profile.html" %} {% block main %} {% load static i18n  l10n %}
+{% extends "profile.html" %} {% block main %} {% load static l10n %}
 <style>
     body {
         background-color: #f8f9fa;
@@ -42,8 +42,6 @@
         <div class="card mb-4 shadow-sm">
             <div class="card-header fw-bold">Personal Information</div>
             <div class="card-body">
-                <p>Current Language: {% get_current_language as LANG %}{{ LANG }}</p>
-                <p>Joined on: {{ user.date_joined|date:"d F Y, P"|localize }}</p>
                 <p><strong>Email:</strong> {{ request.user.email|default:"NA" }}</p>
                 <p><strong>Phone:</strong> {{ request.user.phone|default:"NA" }}</p>
                 <p><strong>Education:</strong> {{ request.user.matrimony_profile.education|default:"NA" }}</p>
@@ -51,6 +49,7 @@
                 <p>
                     <strong>Location:</strong> {{ request.user.matrimony_profile.city|default:"NA" }}, {{ request.user.matrimony_profile.country|default:"NA" }}
                 </p>
+                <p>Joined on: {{ user.date_joined|date:"d F Y, P"|localize }}</p>
                 <button class="btn btn-outline-primary btn-sm">Edit Info</button>
             </div>
         </div>
