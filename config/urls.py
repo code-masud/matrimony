@@ -38,7 +38,7 @@ urlpatterns += i18n_patterns(
     path('accounts/', include('allauth.urls')),
     
     # App inclusions
-    path('profile/', include('profiles.urls')),
+    path('profiles/', include('profiles.urls')),
     path('chat/', include('chat.urls')),
     path('matches/', include('matches.urls')),
     path('explore/', include('explore.urls')),

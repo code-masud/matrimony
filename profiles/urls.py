@@ -3,5 +3,5 @@ from .views import *
 
 app_name='profiles'
 urlpatterns = [
-    path('detail/<int:pk>/', ProfileDetail.as_view(), name="detail"),
+    path('<int:pk>/', ProfileDetail.as_view(), name="detail"),
 ]
