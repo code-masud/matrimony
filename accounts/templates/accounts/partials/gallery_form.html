@@ -1,4 +1,4 @@
-<form hx-post="{% if photo.id %}{% url 'accounts:update_gallery' photo.id %}{% else %}{% url 'accounts:create_gallery' request.user.id %}{% endif %}" hx-target='#gallery' hx-swap='beforeend' enctype="multipart/form-data">
+<form hx-post="{% if photo.id %}{% url 'accounts:update_gallery' photo.id %}{% else %}{% url 'accounts:create_gallery' request.user.id %}{% endif %}" hx-target='#gallery' hx-swap='outerHTML' enctype="multipart/form-data">
     {% csrf_token %}
     {% load crispy_forms_tags %}
     {{ form|crispy }}

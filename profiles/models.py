@@ -136,7 +136,7 @@ class ProfilePhoto(models.Model):
         related_name="photos"
     )
 
-    image = models.ImageField(upload_to=gallery_image_upload_path, validators=[image_validation])
+    image = models.ImageField(upload_to=gallery_image_upload_path, validators=[image_validation],blank=True,null=True)
     is_primary = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

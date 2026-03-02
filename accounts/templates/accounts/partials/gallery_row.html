@@ -1,4 +1,8 @@
+{% for photo in request.user.photos.all %}
     <div class="col-4">
+        {% if photo.image %}
         <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="Gallery" style="width: 50px; height: 50px;" />
+        {% endif %}
         <button hx-get="{% url 'accounts:update_gallery' photo.id %}" hx-target='#modal-body' class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-pen"></i></button>
     </div>
+{% endfor %}
