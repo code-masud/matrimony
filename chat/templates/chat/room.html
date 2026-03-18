@@ -46,10 +46,12 @@
     <div class="col-md-3 chat-list">
         <h5 class="p-3 border-bottom">Accepted Requests</h5>
         <ul class="list-group list-group-flush">
+            {% for user in users %}
             <li class="list-group-item d-flex align-items-center">
                 <img src="https://source.unsplash.com/40x40/?man" class="rounded-circle me-2" alt="User" />
-                <span>Arjun Kumar (30)</span>
+                <span>{{ user.username }}</span>
             </li>
+            {% endfor %}
             <li class="list-group-item d-flex align-items-center">
                 <img src="https://source.unsplash.com/40x40/?woman" class="rounded-circle me-2" alt="User" />
                 <span>Priya Singh (26)</span>
