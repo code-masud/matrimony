@@ -29,21 +29,77 @@
   </div>
 
   <!-- Chat Messages -->
-  <div class="chat-messages">
+  <div class="chat-messages" id="chat-messages">
     {% for message in messages %} {% if message.sender == other %}
-    <div class="message received">{{ message }}</div>
+    <div class="message received">{{ message.content }}</div>
     {% else %}
-    <div class="message sent">{{ message }}</div>
+    <div class="message sent">{{ message.content }}</div>
     {% endif %} {% endfor %}
   </div>
 
   <!-- Chat Input -->
-  <form class="chat-input d-flex p-3 border-top">
+  <div class="chat-input d-flex p-3 border-top">
     <input
+      id="msg"
       type="text"
       class="form-control me-2"
       placeholder="Type a message..."
     />
-    <button class="btn btn-primary"><i class="bi bi-send"></i></button>
-  </form>
+    <button class="btn btn-primary" onclick="sendMsg()">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
 </div>
+
+<script>
+  (function () {
+    if (window.chatSocket) {
+      window.chatSocket.close();
+    }
+
+    const otherUser = "{{ other.username }}";
+
+    window.chatSocket = new WebSocket(
+      "ws://" + window.location.host + "/ws/private/" + otherUser + "/",
+    );
+
+    window.chatSocket.onopen = function (event) {
+      console.log("Connected to Server");
+    };
+
+    window.chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      console.log(data);
+
+      const messages = document.getElementById("chat-messages");
+
+      if (data.type === "chat.message") {
+        const isMine = data.sender === "{{ request.user.username }}";
+
+        messages.innerHTML += `
+        <div class="${isMine ? "message sent" : "message received"}">
+                ${data.message}
+        </div>
+    `;
+
+        messages.scrollTop = messages.scrollHeight;
+      }
+    };
+
+    window.chatSocket.onerror = function (error) {
+      console.error("WebSocket Error:", error);
+    };
+
+    window.chatSocket.onclose = function (event) {
+      console.log("Disconnected");
+    };
+
+    window.sendMsg = function () {
+      const input = document.getElementById("msg");
+      window.chatSocket.send(
+        JSON.stringify({ type: "chat.message", message: input.value }),
+      );
+      input.value = "";
+    };
+  })();
+</script>

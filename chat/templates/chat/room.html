@@ -102,35 +102,35 @@
 </div>
 
 <script>
-  const chatSocket = new WebSocket(
+  const presenceSocket = new WebSocket(
     "ws://" + window.location.host + "/ws/presence/",
   );
 
-chatSocket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
+  presenceSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
 
-  if (data.type === "presence_broadcast") {
-    const isOnline = data.status === "online";
+    if (data.type === "presence_broadcast") {
+      const isOnline = data.status === "online";
 
-    document
-      .querySelectorAll(`.presence_status_online_${data.user}`)
-      .forEach((el) => el.classList.toggle("d-none", !isOnline));
+      document
+        .querySelectorAll(`.presence_status_online_${data.user}`)
+        .forEach((el) => el.classList.toggle("d-none", !isOnline));
 
-    document
-      .querySelectorAll(`.presence_status_offline_${data.user}`)
-      .forEach((el) => el.classList.toggle("d-none", isOnline));
-  }
-};
+      document
+        .querySelectorAll(`.presence_status_offline_${data.user}`)
+        .forEach((el) => el.classList.toggle("d-none", isOnline));
+    }
+  };
 
-  chatSocket.onopen = () => {
+  presenceSocket.onopen = () => {
     console.log("Connected");
   };
 
-  chatSocket.onerror = (error) => {
+  presenceSocket.onerror = (error) => {
     console.log("Socket error: " + error);
   };
 
-  chatSocket.onclose = () => {
+  presenceSocket.onclose = () => {
     console.log("Socket close unexpectedly");
   };
 </script>
