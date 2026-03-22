@@ -49,6 +49,9 @@
       <i class="bi bi-send"></i>
     </button>
   </div>
+  <div id="typing-indicator" class="text-muted">
+    <small><span id="typing-user"></span></small>
+  </div>
 </div>
 
 <script>
@@ -58,48 +61,77 @@
     }
 
     const otherUser = "{{ other.username }}";
+    const input = document.getElementById("msg");
+    const messages = document.getElementById("chat-messages");
+    const typingUser = document.getElementById("typing-user");
+    let typingTimeout;
 
     window.chatSocket = new WebSocket(
       "ws://" + window.location.host + "/ws/private/" + otherUser + "/",
     );
 
-    window.chatSocket.onopen = function (event) {
+    window.chatSocket.onopen = () => {
       console.log("Connected to Server");
     };
 
-    window.chatSocket.onmessage = function (e) {
+    window.chatSocket.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log(data);
 
-      const messages = document.getElementById("chat-messages");
-
       if (data.type === "chat.message") {
         const isMine = data.sender === "{{ request.user.username }}";
-
         messages.innerHTML += `
-        <div class="${isMine ? "message sent" : "message received"}">
-                ${data.message}
-        </div>
-    `;
-
+          <div class="${isMine ? "message sent" : "message received"}">
+            ${data.message}
+          </div>
+        `;
         messages.scrollTop = messages.scrollHeight;
+      }
+
+      if (data.type === "typing") {
+        typingUser.innerHTML = `${data.user} typing...`;
+      }
+
+      if (data.type === "stop_typing") {
+        typingUser.innerHTML = "";
       }
     };
 
-    window.chatSocket.onerror = function (error) {
+    window.chatSocket.onerror = (error) => {
       console.error("WebSocket Error:", error);
     };
 
-    window.chatSocket.onclose = function (event) {
+    window.chatSocket.onclose = () => {
       console.log("Disconnected");
     };
 
-    window.sendMsg = function () {
-      const input = document.getElementById("msg");
+    // Send chat message
+    window.sendMsg = () => {
+      if (!input.value.trim()) return;
       window.chatSocket.send(
         JSON.stringify({ type: "chat.message", message: input.value }),
       );
       input.value = "";
+      input.focus();
     };
+
+    // Typing indicator
+    input.addEventListener("input", () => {
+      window.chatSocket.send(JSON.stringify({ type: "typing" }));
+
+      if (typingTimeout) clearTimeout(typingTimeout);
+
+      typingTimeout = setTimeout(() => {
+        window.chatSocket.send(JSON.stringify({ type: "stop_typing" }));
+      }, 2000);
+    });
+
+    // Send message on Enter
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        window.sendMsg();
+      }
+    });
   })();
 </script>

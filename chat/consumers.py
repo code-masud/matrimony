@@ -16,6 +16,7 @@ User = get_user_model()
 
 redis_client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
 
+
 class PresenceConsumer(AsyncWebsocketConsumer):
     GROUP_NAME = 'online_users'
     ONLINE_SET_KEY = "online_users_set"
@@ -49,7 +50,6 @@ class PresenceConsumer(AsyncWebsocketConsumer):
     async def presence_broadcast(self, event):
         await self.send(text_data=json.dumps(event))
 
-    
     @sync_to_async
     def add_user(self):
         redis_client.sadd(self.ONLINE_SET_KEY, self.scope['user'].id)
@@ -57,10 +57,11 @@ class PresenceConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def remove_user(self):
         return redis_client.srem(self.ONLINE_SET_KEY, self.scope['user'].id)
-    
+
     @sync_to_async
     def check_online(self):
         return redis_client.sismember(self.ONLINE_SET_KEY, self.scope['user'].id)
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -71,7 +72,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if isinstance(self.user, AnonymousUser):
             await self.close(code=4001)
             return
-        
+
         self.other = await self.get_user(self.other_username)
 
         if not self.other:
@@ -91,18 +92,45 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
 
-        msg = await self.save_message(message)
+        if text_data_json.get("type") == "typing":
+            await self.channel_layer.group_send(self.group_name, {
+                "type": "typing.broadcast",
+                "user": self.user.username,
+            })
 
-        await self.channel_layer.group_send(self.group_name, {
-            'type': "chat.message",
-            "message": msg.content,
-            "sender": self.user.username,
-        })
+        if text_data_json.get("type") == "stop_typing":
+            await self.channel_layer.group_send(self.group_name, {
+                "type": "stop_typing.broadcast",
+                "user": self.user.username,
+            })
+
+        if text_data_json.get("type") == "chat.message":
+            message = text_data_json['message']
+            msg = await self.save_message(message)
+
+            await self.channel_layer.group_send(self.group_name, {
+                'type': "chat.message",
+                "message": msg.content,
+                "sender": self.user.username,
+            })
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
+
+    async def typing_broadcast(self, event):
+        if event["user"] != self.user.username:
+            await self.send(text_data=json.dumps({
+                "type": "typing",
+                "user": str(event["user"]).title(),
+            }))
+            
+    async def stop_typing_broadcast(self, event):
+        if event["user"] != self.user.username:
+            await self.send(text_data=json.dumps({
+                "type": "stop_typing",
+                "user": str(event["user"]).title(),
+            }))
 
     @sync_to_async
     def get_user(self, username):
@@ -110,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return User.objects.get(username=username)
         except ObjectDoesNotExist:
             return None
-        
+
     @sync_to_async
     def save_message(self, message):
         return Message.objects.create(
