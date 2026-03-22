@@ -3,7 +3,7 @@ import json
 from django.dispatch import receiver
 import channels
 import redis
-
+import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.conf import settings
@@ -41,6 +41,8 @@ class PresenceConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
+        await self.set_last_seen()
+        
         await self.channel_layer.group_send(self.GROUP_NAME, {
             'type': 'presence_broadcast',
             'user': self.scope['user'].id,
@@ -52,6 +54,7 @@ class PresenceConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def add_user(self):
+
         redis_client.sadd(self.ONLINE_SET_KEY, self.scope['user'].id)
 
     @sync_to_async
@@ -61,6 +64,10 @@ class PresenceConsumer(AsyncWebsocketConsumer):
     @sync_to_async
     def check_online(self):
         return redis_client.sismember(self.ONLINE_SET_KEY, self.scope['user'].id)
+
+    @sync_to_async
+    def set_last_seen(self):
+        redis_client.set(f"last_seen:{self.user.id}", int(time.time()))
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -124,7 +131,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "type": "typing",
                 "user": str(event["user"]).title(),
             }))
-            
+
     async def stop_typing_broadcast(self, event):
         if event["user"] != self.user.username:
             await self.send(text_data=json.dumps({

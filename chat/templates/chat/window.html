@@ -1,6 +1,6 @@
 <!-- Chat Header -->
 <div id="chat-window">
-  {% load static %} {% load is_presence %}
+  {% load static humanize is_presence get_last_seen %}
   <div class="d-flex align-items-center mb-3 border-bottom p-3">
     {% if other.matrimony_profile.profile_picture %}
     <img
@@ -25,6 +25,9 @@
           class="presence_status_offline_{{ other.id }} status-dot offline {% if other|is_presence %}d-none{% endif %}"
         ></span>
       </h5>
+        {% if not other|is_presence %}
+        <span id="last_seen">last seen {{ other|get_last_seen|naturaltime }}</span>
+        {% endif %}
     </div>
   </div>
 
@@ -76,7 +79,6 @@
 
     window.chatSocket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log(data);
 
       if (data.type === "chat.message") {
         const isMine = data.sender === "{{ request.user.username }}";

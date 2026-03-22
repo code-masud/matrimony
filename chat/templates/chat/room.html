@@ -119,6 +119,18 @@
       document
         .querySelectorAll(`.presence_status_offline_${data.user}`)
         .forEach((el) => el.classList.toggle("d-none", isOnline));
+
+      const lastSeen = document.getElementById("last_seen");
+
+      if (data.status === "offline") {
+        if (lastSeen) {
+          lastSeen.textContent = `last seen just now`;
+        }
+      }else{
+        if (lastSeen) {
+          lastSeen.textContent = ``;
+        }
+      }
     }
   };
 
