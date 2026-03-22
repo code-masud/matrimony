@@ -1,93 +1,74 @@
 {% extends "profile.html" %} {% block main %}
 <style>
-    .chat-container {
-        height: 90vh;
-    }
-    .chat-list {
-        border-right: 1px solid #dee2e6;
-        height: 100%;
-        overflow-y: auto;
-    }
-    .chat-box {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 15px;
-        background: #fff;
-        border-radius: 8px;
-    }
-    .message {
-        margin-bottom: 15px;
-        max-width: 70%;
-        padding: 10px 15px;
-        border-radius: 20px;
-    }
-    .message.sent {
-        background-color: #6c63ff;
-        color: white;
-        margin-left: auto;
-    }
-    .message.received {
-        background-color: #e9ecef;
-        color: #212529;
-        margin-right: auto;
-    }
-    .chat-input {
-        margin-top: 10px;
-    }
+  .chat-container {
+    height: 90vh;
+  }
+  .chat-list {
+    border-right: 1px solid #dee2e6;
+    height: 100%;
+    overflow-y: auto;
+  }
+  .chat-box {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+  }
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+  }
+  .message {
+    margin-bottom: 15px;
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 20px;
+  }
+  .message.sent {
+    background-color: #6c63ff;
+    color: white;
+    margin-left: auto;
+  }
+  .message.received {
+    background-color: #e9ecef;
+    color: #212529;
+    margin-right: auto;
+  }
+  .chat-input {
+    margin-top: 10px;
+  }
 </style>
-
+{% load static %}
 <div class="row chat-container">
-    <!-- Left Column: Interest Requests Accepted -->
-    <div class="col-md-3 chat-list">
-        <h5 class="p-3 border-bottom">Accepted Requests</h5>
-        <ul class="list-group list-group-flush">
-            {% for user in users %}
-            <li class="list-group-item d-flex align-items-center">
-                <img src="https://source.unsplash.com/40x40/?man" class="rounded-circle me-2" alt="User" />
-                <span>{{ user.username }}</span>
-            </li>
-            {% endfor %}
-            <li class="list-group-item d-flex align-items-center">
-                <img src="https://source.unsplash.com/40x40/?woman" class="rounded-circle me-2" alt="User" />
-                <span>Priya Singh (26)</span>
-            </li>
-            <li class="list-group-item d-flex align-items-center">
-                <img src="https://source.unsplash.com/40x40/?portrait" class="rounded-circle me-2" alt="User" />
-                <span>Rahul Mehta (29)</span>
-            </li>
-        </ul>
-    </div>
+  <!-- Left Column: Interest Requests Accepted -->
+  <div class="col-md-3 chat-list">
+    <h5 class="p-3 border-bottom">Accepted Requests</h5>
+    <ul class="list-group list-group-flush">
+      {% for user in users %}
+      <li
+        hx-get="{% url 'chat:private_chat' user.id %}"
+        hx-trigger="click"
+        hx-target="#chat-window"
+        hx-swap="outerHTML"
+        class="list-group-item d-flex align-items-center"
+      >
+        {% if user.matrimony_profile.profile_picture %}
+        <img class="rounded-circle me-2" src="{{ user.matrimony_profile.profile_picture.url }}" alt="{{ user.get_username}} Photo" />
+        {% else %}
+        <img class="rounded-circle me-2" src="{% static 'avatar/male.png' %}" alt="{{ user.get_username}} Photo" />
+        {% endif %}
+        <span>{{ user.username }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-    <!-- Right Column: Chat Box -->
-    <div class="col-md-9 chat-box">
-        <!-- Chat Header -->
-        <div class="d-flex align-items-center mb-3 border-bottom p-3">
-            <img src="https://source.unsplash.com/60x60/?woman" class="rounded-circle me-2" alt="User" />
-            <div>
-                <h5 class="mb-0">Priya Singh</h5>
-                <small class="text-muted">Online</small>
-            </div>
-        </div>
-
-        <!-- Chat Messages -->
-        <div class="chat-messages">
-            <div class="message received">Hi, nice to connect with you!</div>
-            <div class="message sent">Hello Priya, pleasure to meet you.</div>
-            <div class="message received">I’d love to know more about your interests.</div>
-            <div class="message sent">Sure! I enjoy traveling, reading, and cooking.</div>
-        </div>
-
-        <!-- Chat Input -->
-        <form class="chat-input d-flex p-3 border-top">
-            <input type="text" class="form-control me-2" placeholder="Type a message..." />
-            <button class="btn btn-primary"><i class="bi bi-send"></i></button>
-        </form>
-    </div>
+  <!-- Right Column: Chat Box -->
+  <div class="col-md-9 chat-box">
+    <div id="chat-window"></div>
+  </div>
 </div>
 
 {% endblock %}

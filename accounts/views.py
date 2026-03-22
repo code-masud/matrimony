@@ -7,6 +7,8 @@ from profiles.models import MatrimonyProfile, PartnerPreference, ProfilePhoto
 from .forms import CustomUserChangeForm, MatrimonyProfileForm, PartnerPreferenceForm, ProfilePhotoForm, GalleryImageForm
 
 # Create your views here.
+
+
 class MyProfile(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
     template_name = 'accounts/index.html'
     permission_required = ['accounts.view_user']
@@ -16,6 +18,7 @@ class MyProfile(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
         context["title"] = 'My Profile'
         return context
 
+
 class HtmxFormMixin:
     row_template = None
     htmx_trigger = 'closeModal'
@@ -24,12 +27,14 @@ class HtmxFormMixin:
         self.object = form.save()
 
         if self.request.headers.get("HX-Request"):
-            response = render(self.request, self.row_template, {self.context_object_name: self.object})
+            response = render(self.request, self.row_template, {
+                              self.context_object_name: self.object})
             response['HX-Trigger'] = self.htmx_trigger
             return response
-        
+
         return super().form_valid(form)
-    
+
+
 class UpdateUser(HtmxFormMixin, UpdateView):
     model = User
     template_name = 'accounts/partials/user_form.html'
@@ -40,6 +45,7 @@ class UpdateUser(HtmxFormMixin, UpdateView):
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'
 
+
 class UpdateProfileImage(HtmxFormMixin, UpdateView):
     model = MatrimonyProfile
     template_name = 'accounts/partials/profile_image_form.html'
@@ -49,6 +55,7 @@ class UpdateProfileImage(HtmxFormMixin, UpdateView):
     success_url = reverse_lazy('accounts:my_profile')
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'
+
 
 class CreateMatrimonyProfile(CreateView):
     model = MatrimonyProfile
@@ -65,11 +72,13 @@ class CreateMatrimonyProfile(CreateView):
         self.object = form.save()
 
         if self.request.headers.get("HX-Request"):
-            response = render(self.request, self.row_template, {self.context_object_name: self.object})
+            response = render(self.request, self.row_template, {
+                              self.context_object_name: self.object})
             response['HX-Trigger'] = self.htmx_trigger
             return response
-        
+
         return super().form_valid(form)
+
 
 class UpdateMatrimonyProfile(HtmxFormMixin, UpdateView):
     model = MatrimonyProfile
@@ -80,6 +89,7 @@ class UpdateMatrimonyProfile(HtmxFormMixin, UpdateView):
     success_url = reverse_lazy('accounts:my_profile')
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'
+
 
 class CreatePartnerPreference(CreateView):
     model = PartnerPreference
@@ -96,11 +106,13 @@ class CreatePartnerPreference(CreateView):
         self.object = form.save()
 
         if self.request.headers.get("HX-Request"):
-            response = render(self.request, self.row_template, {self.context_object_name: self.object})
+            response = render(self.request, self.row_template, {
+                              self.context_object_name: self.object})
             response['HX-Trigger'] = self.htmx_trigger
             return response
-        
+
         return super().form_valid(form)
+
 
 class UpdatePartnerPreference(HtmxFormMixin, UpdateView):
     model = PartnerPreference
@@ -111,6 +123,7 @@ class UpdatePartnerPreference(HtmxFormMixin, UpdateView):
     success_url = reverse_lazy('accounts:my_profile')
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'
+
 
 class GalleryCreate(CreateView):
     model = ProfilePhoto
@@ -127,12 +140,14 @@ class GalleryCreate(CreateView):
         self.object = form.save()
 
         if self.request.headers.get("HX-Request"):
-            response = render(self.request, self.row_template, {self.context_object_name: self.object})
+            response = render(self.request, self.row_template, {
+                              self.context_object_name: self.object})
             response['HX-Trigger'] = self.htmx_trigger
             return response
-        
+
         return super().form_valid(form)
-    
+
+
 class GalleryUpdate(HtmxFormMixin, UpdateView):
     model = ProfilePhoto
     template_name = 'accounts/partials/gallery_form.html'

@@ -13,6 +13,7 @@
         {% bootstrap_css %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <!-- Custom CSS -->
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org/dist/htmx.min.js"></script>
         <style>
             body {
                 font-family: "Segoe UI", sans-serif;
@@ -112,7 +113,6 @@
 
         <!-- Bootstrap JS -->
         {% bootstrap_javascript %}
-        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
         <script>
             var myModalEl  = document.getElementById("exampleModal");
             document.body.addEventListener("closeModal", () => {

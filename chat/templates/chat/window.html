@@ -1,0 +1,44 @@
+<!-- Chat Header -->
+{% load static %} {% load is_presence %}
+<div class="d-flex align-items-center mb-3 border-bottom p-3">
+  {% if other.matrimony_profile.profile_picture %}
+  <img
+    class="rounded-circle me-2"
+    src="{{ other.matrimony_profile.profile_picture.url }}"
+    alt="{{ other.get_username}} Photo"
+  />
+  {% else %}
+  <img
+    class="rounded-circle me-2"
+    src="{% static 'avatar/male.png' %}"
+    alt="{{ other.get_username}} Photo"
+  />
+  {% endif %}
+  <div>
+    <h5 class="mb-0">{{ other.get_username }}</h5>
+    {% if other|is_presence %}
+    <small class="text-muted">Online</small>
+    {% else %}
+    <small class="text-muted">Offline</small>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Chat Messages -->
+<div class="chat-messages">
+  {% for message in messages %} {% if message.sender == other %}
+  <div class="message received">{{ message }}</div>
+  {% else %}
+  <div class="message sent">{{ message }}</div>
+  {% endif %} {% endfor %}
+</div>
+
+<!-- Chat Input -->
+<form class="chat-input d-flex p-3 border-top">
+  <input
+    type="text"
+    class="form-control me-2"
+    placeholder="Type a message..."
+  />
+  <button class="btn btn-primary"><i class="bi bi-send"></i></button>
+</form>
