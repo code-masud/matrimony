@@ -22,18 +22,18 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         await self.channel_layer.group_send(self.GROUP_NAME, {
-            'type': 'presence.broadcast',
+            'type': 'presence_broadcast',
             'user': self.scope['user'].id,
             "status": "online"
         })
 
     async def disconnect(self, close_code):
         await self.remove_user()
-        
+
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
         await self.channel_layer.group_send(self.GROUP_NAME, {
-            'type': 'presence.broadcast',
+            'type': 'presence_broadcast',
             'user': self.scope['user'].id,
             "status": "offline"
         })

@@ -1,6 +1,6 @@
 <!-- Chat Header -->
 <div id="chat-window">
-{% load static %} {% load is_presence %}
+  {% load static %} {% load is_presence %}
   <div class="d-flex align-items-center mb-3 border-bottom p-3">
     {% if other.matrimony_profile.profile_picture %}
     <img
@@ -16,12 +16,15 @@
     />
     {% endif %}
     <div>
-      <h5 class="mb-0">{{ other.get_username }}</h5>
-      {% if other|is_presence %}
-      <small class="text-muted">Online</small>
-      {% else %}
-      <small class="text-muted">Offline</small>
-      {% endif %}
+      <h5 class="mb-0">
+        {{ other.get_username }}
+        <span
+          class="presence_status_online_{{ other.id }} status-dot online {% if not other|is_presence %}d-none{% endif %}"
+        ></span>
+        <span
+          class="presence_status_offline_{{ other.id }} status-dot offline {% if other|is_presence %}d-none{% endif %}"
+        ></span>
+      </h5>
     </div>
   </div>
 

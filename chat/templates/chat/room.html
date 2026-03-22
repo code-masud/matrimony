@@ -39,11 +39,25 @@
   .chat-input {
     margin-top: 10px;
   }
+  .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .online {
+    background-color: #22c55e; /* green */
+  }
+
+  .offline {
+    background-color: #e71919; /* gray */
+  }
 </style>
-{% load static %}
+{% load static is_presence %}
 <div class="row chat-container">
   <!-- Left Column: Interest Requests Accepted -->
-  <div class="col-md-3 chat-list">
+  <div class="col-md-4 chat-list">
     <h5 class="p-3 border-bottom">Accepted Requests</h5>
     <ul class="list-group list-group-flush">
       {% for user in users %}
@@ -55,43 +69,70 @@
         class="list-group-item d-flex align-items-center"
       >
         {% if user.matrimony_profile.profile_picture %}
-        <img class="rounded-circle me-2" src="{{ user.matrimony_profile.profile_picture.url }}" alt="{{ user.get_username}} Photo" />
+        <img
+          class="rounded-circle me-2"
+          src="{{ user.matrimony_profile.profile_picture.url }}"
+          alt="{{ user.get_username}} Photo"
+        />
         {% else %}
-        <img class="rounded-circle me-2" src="{% static 'avatar/male.png' %}" alt="{{ user.get_username}} Photo" />
+        <img
+          class="rounded-circle me-2"
+          src="{% static 'avatar/male.png' %}"
+          alt="{{ user.get_username}} Photo"
+        />
         {% endif %}
-        <span>{{ user.username }}</span>
+        <span>
+          {{ user.username }}
+          <span
+            class="presence_status_online_{{ user.id }} status-dot online {% if not user|is_presence %}d-none{% endif %}"
+          ></span>
+          <span
+            class="presence_status_offline_{{ user.id }} status-dot offline {% if user|is_presence %}d-none{% endif %}"
+          ></span>
+        </span>
       </li>
       {% endfor %}
     </ul>
   </div>
 
   <!-- Right Column: Chat Box -->
-  <div class="col-md-9 chat-box">
+  <div class="col-md-8 chat-box">
     <div id="chat-window"></div>
   </div>
 </div>
 
 <script>
-    const chatSocket = new WebSocket(
-      "ws://" + window.location.host + "/ws/presence/",
-    );
+  const chatSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/presence/",
+  );
 
-    chatSocket.onmessage = (event) => {
-        const data = event.data
-        console.log(data)
-    }
+chatSocket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
 
-    chatSocket.onopen  = () => {
-        console.log('Connected')
-    }
+  if (data.type === "presence_broadcast") {
+    const isOnline = data.status === "online";
 
-    chatSocket.onerror = (error) => {
-        console.log('Socket error: '+ error)
-    }
+    document
+      .querySelectorAll(`.presence_status_online_${data.user}`)
+      .forEach((el) => el.classList.toggle("d-none", !isOnline));
 
-    chatSocket.onclose = () => {
-        console.log('Socket close unexpectedly')
-    }
+    document
+      .querySelectorAll(`.presence_status_offline_${data.user}`)
+      .forEach((el) => el.classList.toggle("d-none", isOnline));
+  }
+};
+
+  chatSocket.onopen = () => {
+    console.log("Connected");
+  };
+
+  chatSocket.onerror = (error) => {
+    console.log("Socket error: " + error);
+  };
+
+  chatSocket.onclose = () => {
+    console.log("Socket close unexpectedly");
+  };
 </script>
 
 {% endblock %}
