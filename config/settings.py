@@ -33,6 +33,8 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    "channels",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,8 +90,19 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+# WSGI_APPLICATION = 'config.wsgi.application'
+# Channels
+ASGI_APPLICATION = "config.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://default:LSYiyvWdL7ubDFXZZfzILGVIavGAIWTU@redis-14540.c8.us-east-1-2.ec2.cloud.redislabs.com:14540"],
+        },
+    },
+}
 
+REDIS_URL = "redis://default:LSYiyvWdL7ubDFXZZfzILGVIavGAIWTU@redis-14540.c8.us-east-1-2.ec2.cloud.redislabs.com:14540"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -145,8 +158,6 @@ LOCALE_PATHS = [
 ]
 
 
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
@@ -176,7 +187,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Email Configuration
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"

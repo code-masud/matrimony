@@ -9,9 +9,9 @@ from .forms import CustomUserChangeForm, MatrimonyProfileForm, PartnerPreference
 # Create your views here.
 
 
-class MyProfile(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+class MyProfile(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/index.html'
-    permission_required = ['accounts.view_user']
+    # permission_required = ['accounts.view_user']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

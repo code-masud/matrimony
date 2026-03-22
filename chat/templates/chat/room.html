@@ -71,4 +71,27 @@
   </div>
 </div>
 
+<script>
+    const chatSocket = new WebSocket(
+      "ws://" + window.location.host + "/ws/presence/",
+    );
+
+    chatSocket.onmessage = (event) => {
+        const data = event.data
+        console.log(data)
+    }
+
+    chatSocket.onopen  = () => {
+        console.log('Connected')
+    }
+
+    chatSocket.onerror = (error) => {
+        console.log('Socket error: '+ error)
+    }
+
+    chatSocket.onclose = () => {
+        console.log('Socket close unexpectedly')
+    }
+</script>
+
 {% endblock %}
