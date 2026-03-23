@@ -39,7 +39,7 @@ class PrivateChat(LoginRequiredMixin, TemplateView):
         messages = Message.objects.filter(
             Q(sender=self.request.user, receiver=other) |
             Q(sender=other, receiver=self.request.user)
-        ).order_by("timestamp")
+        ).order_by("timestamp")[:10]
         context['messages'] = messages
 
         return context
