@@ -98,12 +98,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": ["redis://default:LSYiyvWdL7ubDFXZZfzILGVIavGAIWTU@redis-14540.c8.us-east-1-2.ec2.cloud.redislabs.com:14540"],
+            "hosts": [os.getenv('CHANNEL_LAYER_HOSTS')],
         },
     },
 }
 
-REDIS_URL = "redis://default:LSYiyvWdL7ubDFXZZfzILGVIavGAIWTU@redis-14540.c8.us-east-1-2.ec2.cloud.redislabs.com:14540"
+REDIS_URL = os.getenv('CHANNEL_LAYER_HOSTS')
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
