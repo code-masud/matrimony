@@ -1,83 +1,60 @@
-<!-- Chat Header -->
-<div id="chat-window">
-  {% load static humanize is_presence get_last_seen %}
-  <div class="d-flex align-items-center mb-3 border-bottom p-3">
-    {% if other.matrimony_profile.profile_picture %}
+{% load static humanize is_presence get_last_seen %}
+<div id="chat-window" class="d-flex flex-column h-100">
+  <!-- Header -->
+  <div class="chat-header d-flex align-items-center p-3">
     <img
-      class="rounded-circle me-2"
-      src="{{ other.matrimony_profile.profile_picture.url }}"
-      alt="{{ other.get_username}} Photo"
+      class="rounded-circle avatar me-2"
+      src="{% if other.matrimony_profile.profile_picture %}
+        {{ other.matrimony_profile.profile_picture.url }}
+      {% else %}
+        {% static 'avatar/male.png' %}
+      {% endif %}"
     />
-    {% else %}
-    <img
-      class="rounded-circle me-2"
-      src="{% static 'avatar/male.png' %}"
-      alt="{{ other.get_username}} Photo"
-    />
-    {% endif %}
+
     <div>
-      <h5 class="mb-0">
-        {{ other.get_username }}
+      <div class="fw-semibold">
+        {{ other.username }}
         <span
-          class="presence_status_online_{{ other.id }} status-dot online {% if not other|is_presence %}d-none{% endif %}"
+          class="status-dot {% if other|is_presence %}online{% else %}offline{% endif %}"
         ></span>
-        <span
-          class="presence_status_offline_{{ other.id }} status-dot offline {% if other|is_presence %}d-none{% endif %}"
-        ></span>
-      </h5>
-      {% if not other|is_presence %}
-      <span id="last_seen"
-        >last seen {{ other|get_last_seen|naturaltime }}</span
-      >
-      {% endif %}
+      </div>
+
+      <small class="text-muted">
+        {% if not other|is_presence %} last seen {{
+        other|get_last_seen|naturaltime }} {% else %} online {% endif %}
+      </small>
     </div>
   </div>
 
-  <!-- Chat Messages -->
+  <!-- Messages -->
   <div class="chat-messages" id="chat-messages">
-    {% for message in messages %} {% if message.sender == other %}
-    <div class="message received">
-      <div class="message" id="msg-{{message.id}}">
-        <span>{{ message.content }}</span>
-        {% if message.is_seen %}
-        <span class="ticks" style="color: blue">✓✓</span>
-        {% elif message.is_delivered %}
-        <span class="ticks" style="color: gray">✓✓</span>
-        {% else %}
-        <span class="ticks">✓</span>
+    {% for message in messages %}
+    <div
+      class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}"
+    >
+      {{ message.content }}
+
+      <span
+        class="ticks {% if message.is_seen %}text-primary {% elif message.is_delivered %}text-muted {% endif %}"
+      >
+        {% if message.is_seen %}✓✓ {% elif message.is_delivered %}✓✓ {% else %}✓
         {% endif %}
-      </div>
+      </span>
     </div>
-    {% else %}
-    <div class="message sent">
-      <div class="message" id="msg-{{message.id}}">
-        <span>{{ message.content }}</span>
-        {% if message.is_seen %}
-        <span class="ticks" style="color: blue">✓✓</span>
-        {% elif message.is_delivered %}
-        <span class="ticks" style="color: gray">✓✓</span>
-        {% else %}
-        <span class="ticks">✓</span>
-        {% endif %}
-      </div>
-    </div>
-    {% endif %} {% endfor %}
+    {% endfor %}
   </div>
 
-  <!-- Chat Input -->
-  <div class="chat-input d-flex p-3 border-top">
-    <input
-      id="msg"
-      type="text"
-      class="form-control me-2"
-      placeholder="Type a message..."
-    />
+  <!-- Input -->
+  <div class="chat-input d-flex p-3 gap-2">
+    <input id="msg" class="form-control" placeholder="Type a message..." />
     <button class="btn btn-primary" onclick="sendMsg()">
       <i class="bi bi-send"></i>
     </button>
   </div>
-  <div id="typing-indicator" class="text-muted">
-    <small><span id="typing-user"></span></small>
+
+  <!-- Typing -->
+  <div id="typing-indicator">
+    <span id="typing-user"></span>
   </div>
 </div>
 
@@ -99,12 +76,10 @@
 
     let typingTimeout;
 
-    // 🔌 WebSocket
     window.chatSocket = new WebSocket(
       `ws://${window.location.host}/ws/private/${otherUser}/`,
     );
 
-    // ✅ Append message safely
     function appendMessage({ message_id, content, sender }) {
       const isMine = sender === currentUser;
 
@@ -130,7 +105,6 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    // ✅ Update ticks
     function updateTicks(messageId, status) {
       const msg = document.getElementById(`msg-${messageId}`);
       if (!msg) return;
@@ -148,7 +122,6 @@
       }
     }
 
-    // 📩 Receive messages
     window.chatSocket.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log(data);
@@ -157,7 +130,6 @@
 
         const isFromActiveChat = data.sender === otherUser;
 
-        // ✅ Seen vs Delivered logic
         window.chatSocket.send(
           JSON.stringify({
             type: isFromActiveChat ? "message.seen" : "message.delivered",
@@ -183,12 +155,10 @@
       }
     };
 
-    // ❌ Errors
     window.chatSocket.onerror = (err) => console.error("WebSocket Error:", err);
 
     window.chatSocket.onclose = () => console.log("Disconnected");
 
-    // ✉️ Send message
     window.sendMsg = () => {
       const value = input.value.trim();
       if (!value) return;
@@ -204,7 +174,6 @@
       input.focus();
     };
 
-    // ⌨️ Typing indicator (debounced)
     input.addEventListener("input", () => {
       window.chatSocket.send(JSON.stringify({ type: "typing" }));
 
@@ -215,7 +184,6 @@
       }, 1500);
     });
 
-    // ⏎ Enter to send
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
