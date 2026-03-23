@@ -63,7 +63,9 @@
 </div>
 
 <script>
+
   (function () {
+    setTimeout(scrollToBottom, 200);
     const otherUser = "{{ other.username }}";
     const currentUser = "{{ request.user.username }}";
 
@@ -226,6 +228,10 @@
         ticks.textContent = "✓✓";
         ticks.style.color = "blue";
       }
+    }
+    
+    function scrollToBottom() {
+      messages.scrollTop = messages.scrollHeight;
     }
   })();
 </script>
