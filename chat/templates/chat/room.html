@@ -13,12 +13,18 @@
     flex-direction: column;
     height: 90%;
   }
+  #chat-window {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* full screen */
+  }
+
   .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
+    flex: 1; /* take remaining space */
+    overflow-y: auto; /* enable vertical scroll */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
   }
   .message {
     margin-bottom: 15px;
@@ -126,7 +132,7 @@
         if (lastSeen) {
           lastSeen.textContent = `last seen just now`;
         }
-      }else{
+      } else {
         if (lastSeen) {
           lastSeen.textContent = ``;
         }

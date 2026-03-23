@@ -25,18 +25,42 @@
           class="presence_status_offline_{{ other.id }} status-dot offline {% if other|is_presence %}d-none{% endif %}"
         ></span>
       </h5>
-        {% if not other|is_presence %}
-        <span id="last_seen">last seen {{ other|get_last_seen|naturaltime }}</span>
-        {% endif %}
+      {% if not other|is_presence %}
+      <span id="last_seen"
+        >last seen {{ other|get_last_seen|naturaltime }}</span
+      >
+      {% endif %}
     </div>
   </div>
 
   <!-- Chat Messages -->
   <div class="chat-messages" id="chat-messages">
     {% for message in messages %} {% if message.sender == other %}
-    <div class="message received">{{ message.content }}</div>
+    <div class="message received">
+      <div class="message" id="msg-{{message.id}}">
+        <span>{{ message.content }}</span>
+        {% if message.is_seen %}
+        <span class="ticks" style="color: blue">✓✓</span>
+        {% elif message.is_delivered %}
+        <span class="ticks" style="color: gray">✓✓</span>
+        {% else %}
+        <span class="ticks">✓</span>
+        {% endif %}
+      </div>
+    </div>
     {% else %}
-    <div class="message sent">{{ message.content }}</div>
+    <div class="message sent">
+      <div class="message" id="msg-{{message.id}}">
+        <span>{{ message.content }}</span>
+        {% if message.is_seen %}
+        <span class="ticks" style="color: blue">✓✓</span>
+        {% elif message.is_delivered %}
+        <span class="ticks" style="color: gray">✓✓</span>
+        {% else %}
+        <span class="ticks">✓</span>
+        {% endif %}
+      </div>
+    </div>
     {% endif %} {% endfor %}
   </div>
 
@@ -58,80 +82,143 @@
 </div>
 
 <script>
+  function scrollToBottom() {
+    const messages = document.getElementById("chat-messages");
+    messages.scrollTop = messages.scrollHeight;
+  }
   (function () {
-    if (window.chatSocket) {
-      window.chatSocket.close();
-    }
+    scrollToBottom();
+    if (window.chatSocket) window.chatSocket.close();
 
     const otherUser = "{{ other.username }}";
+    const currentUser = "{{ request.user.username }}";
+
     const input = document.getElementById("msg");
     const messages = document.getElementById("chat-messages");
     const typingUser = document.getElementById("typing-user");
+
     let typingTimeout;
 
+    // 🔌 WebSocket
     window.chatSocket = new WebSocket(
-      "ws://" + window.location.host + "/ws/private/" + otherUser + "/",
+      `ws://${window.location.host}/ws/private/${otherUser}/`,
     );
 
-    window.chatSocket.onopen = () => {
-      console.log("Connected to Server");
-    };
+    // ✅ Append message safely
+    function appendMessage({ message_id, content, sender }) {
+      const isMine = sender === currentUser;
 
+      const wrapper = document.createElement("div");
+      wrapper.className = isMine ? "message sent" : "message received";
+
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message";
+      msgDiv.id = `msg-${message_id}`;
+
+      const text = document.createElement("span");
+      text.textContent = content;
+
+      const ticks = document.createElement("span");
+      ticks.className = "ticks";
+      ticks.textContent = "✓";
+
+      msgDiv.appendChild(text);
+      msgDiv.appendChild(ticks);
+      wrapper.appendChild(msgDiv);
+
+      messages.appendChild(wrapper);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // ✅ Update ticks
+    function updateTicks(messageId, status) {
+      const msg = document.getElementById(`msg-${messageId}`);
+      if (!msg) return;
+
+      const ticks = msg.querySelector(".ticks");
+
+      if (status === "delivered") {
+        ticks.textContent = "✓✓";
+        ticks.style.color = "gray";
+      }
+
+      if (status === "seen") {
+        ticks.textContent = "✓✓";
+        ticks.style.color = "blue";
+      }
+    }
+
+    // 📩 Receive messages
     window.chatSocket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-
+      console.log(data);
       if (data.type === "chat.message") {
-        const isMine = data.sender === "{{ request.user.username }}";
-        messages.innerHTML += `
-          <div class="${isMine ? "message sent" : "message received"}">
-            ${data.message}
-          </div>
-        `;
-        messages.scrollTop = messages.scrollHeight;
+        appendMessage(data);
+
+        const isFromActiveChat = data.sender === otherUser;
+
+        // ✅ Seen vs Delivered logic
+        window.chatSocket.send(
+          JSON.stringify({
+            type: isFromActiveChat ? "message.seen" : "message.delivered",
+            message_id: data.message_id,
+          }),
+        );
+      }
+
+      if (data.type === "message.delivered") {
+        updateTicks(data.message_id, "delivered");
+      }
+
+      if (data.type === "message.seen") {
+        updateTicks(data.message_id, "seen");
       }
 
       if (data.type === "typing") {
-        typingUser.innerHTML = `${data.user} typing...`;
+        typingUser.textContent = `${data.user} typing...`;
       }
 
       if (data.type === "stop_typing") {
-        typingUser.innerHTML = "";
+        typingUser.textContent = "";
       }
     };
 
-    window.chatSocket.onerror = (error) => {
-      console.error("WebSocket Error:", error);
-    };
+    // ❌ Errors
+    window.chatSocket.onerror = (err) => console.error("WebSocket Error:", err);
 
-    window.chatSocket.onclose = () => {
-      console.log("Disconnected");
-    };
+    window.chatSocket.onclose = () => console.log("Disconnected");
 
-    // Send chat message
+    // ✉️ Send message
     window.sendMsg = () => {
-      if (!input.value.trim()) return;
+      const value = input.value.trim();
+      if (!value) return;
+
       window.chatSocket.send(
-        JSON.stringify({ type: "chat.message", message: input.value }),
+        JSON.stringify({
+          type: "chat.message",
+          message: value,
+        }),
       );
+
       input.value = "";
       input.focus();
     };
 
-    // Typing indicator
+    // ⌨️ Typing indicator (debounced)
     input.addEventListener("input", () => {
       window.chatSocket.send(JSON.stringify({ type: "typing" }));
 
-      if (typingTimeout) clearTimeout(typingTimeout);
+      clearTimeout(typingTimeout);
 
       typingTimeout = setTimeout(() => {
         window.chatSocket.send(JSON.stringify({ type: "stop_typing" }));
-      }, 2000);
+      }, 1500);
     });
 
-    // Send message on Enter
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
+    // ⏎ Enter to send
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
         window.sendMsg();
       }
     });

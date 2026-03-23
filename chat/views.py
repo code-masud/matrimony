@@ -30,10 +30,14 @@ class PrivateChat(LoginRequiredMixin, TemplateView):
         other = get_object_or_404(User, pk=kwargs['pk'])
         context['other'] = other
 
+        Message.objects.filter(
+            receiver=self.request.user
+        ).update(is_delivered=True, is_seen=True)
+
         messages = Message.objects.filter(
             Q(sender=self.request.user, receiver=other) |
             Q(sender=other, receiver=self.request.user)
         ).order_by("timestamp")
         context['messages'] = messages
-        
+
         return context

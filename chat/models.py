@@ -10,6 +10,8 @@ class Message(models.Model):
     receiver = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="received")
     content = models.TextField()
+    is_delivered = models.BooleanField(default=False)
+    is_seen = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def room_name(self):

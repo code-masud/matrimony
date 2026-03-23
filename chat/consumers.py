@@ -1,7 +1,4 @@
 import json
-
-from django.dispatch import receiver
-import channels
 import redis
 import time
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -42,7 +39,7 @@ class PresenceConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.GROUP_NAME, self.channel_name)
 
         await self.set_last_seen()
-        
+
         await self.channel_layer.group_send(self.GROUP_NAME, {
             'type': 'presence_broadcast',
             'user': self.scope['user'].id,
@@ -112,13 +109,32 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "user": self.user.username,
             })
 
+        if text_data_json.get("type") == "message.delivered":
+            msg = await self.get_message(text_data_json.get("message_id"))
+            if not msg.is_delivered:
+                await self.mark_delivered(text_data_json.get("message_id"))
+                await self.channel_layer.group_send(self.group_name, {
+                    "type": "message.delivered",
+                    "message_id": text_data_json.get("message_id"),
+                })
+
+        if text_data_json.get("type") == "message.seen":
+            msg = await self.get_message(text_data_json.get("message_id"))
+            if not msg.is_delivered:
+                await self.mark_seen(text_data_json.get("message_id"))
+                await self.channel_layer.group_send(self.group_name, {
+                    "type": "message.seen",
+                    "message_id": text_data_json.get("message_id"),
+                })
+
         if text_data_json.get("type") == "chat.message":
             message = text_data_json['message']
             msg = await self.save_message(message)
 
             await self.channel_layer.group_send(self.group_name, {
                 'type': "chat.message",
-                "message": msg.content,
+                "message_id": msg.id,
+                "content": msg.content,
                 "sender": self.user.username,
             })
 
@@ -139,6 +155,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "user": str(event["user"]).title(),
             }))
 
+    async def message_delivered(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "message.delivered",
+            "message_id": event["message_id"],
+        }))
+
+    async def message_seen(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "message.seen",
+            "message_id": event["message_id"],
+        }))
+
     @sync_to_async
     def get_user(self, username):
         try:
@@ -153,3 +181,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver=self.other,
             content=message
         )
+
+    @sync_to_async
+    def get_message(self, message_id):
+        return Message.objects.get(id=message_id)
+
+    @sync_to_async
+    def mark_delivered(self, message_id):
+        return Message.objects.filter(id=message_id).update(is_delivered=True)
+
+    @sync_to_async
+    def mark_seen(self, message_id):
+        Message.objects.filter(id=message_id).update(
+            is_delivered=True, is_seen=True)
