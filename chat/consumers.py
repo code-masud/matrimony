@@ -120,7 +120,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if text_data_json.get("type") == "message.seen":
             msg = await self.get_message(text_data_json.get("message_id"))
-            if not msg.is_delivered:
+            if not msg.is_seen:
                 await self.mark_seen(text_data_json.get("message_id"))
                 await self.channel_layer.group_send(self.group_name, {
                     "type": "message.seen",
@@ -128,17 +128,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 })
 
         if text_data_json.get("type") == "chat.message":
-            message = text_data_json['message']
+            message = text_data_json.get('message')
             msg = await self.save_message(message)
 
             await self.channel_layer.group_send(self.group_name, {
                 'type': "chat.message",
+                "temp_id": text_data_json.get('temp_id'),
                 "message_id": msg.id,
                 "content": msg.content,
                 "sender": self.user.username,
             })
 
     async def chat_message(self, event):
+        await self.mark_delivered(event["message_id"])
+
         await self.send(text_data=json.dumps(event))
 
     async def typing_broadcast(self, event):

@@ -31,7 +31,9 @@ class PrivateChat(LoginRequiredMixin, TemplateView):
         context['other'] = other
 
         Message.objects.filter(
-            receiver=self.request.user
+            sender=other,
+            receiver=self.request.user,
+            is_seen=False
         ).update(is_delivered=True, is_seen=True)
 
         messages = Message.objects.filter(
