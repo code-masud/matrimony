@@ -15,7 +15,7 @@
         object-fit: cover;
     }
 </style>
-
+{% load static %}
 <!-- Page Header -->
 <div class="text-center mb-4">
     <h2 class="fw-bold">Search Profiles</h2>
@@ -64,10 +64,14 @@
     {% for user in search_result %}
     <div class="col-md-4">
         <div class="card result-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile" />
+            {% if user.matrimony_profile.profile_picture %}
+            <img src="{{ user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+            {% else %}
+            <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
-                <p class="card-text">{{ user.matrimony_profile.occupation }} | {{ user.matrimony_profile.country }}</p>
+                <p class="card-text">{{ user.matrimony_profile.get_occupation_display }} | {{ user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
                     <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
                     <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
