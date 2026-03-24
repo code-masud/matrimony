@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     "crispy_forms",
     "crispy_bootstrap5",
+    'cities_light',
 
     'company.apps.CompanyConfig',
     'accounts.apps.AccountsConfig',
