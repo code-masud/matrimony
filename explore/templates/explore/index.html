@@ -24,32 +24,32 @@
 
 <!-- Search Bar -->
 <div class="search-bar">
-    <form class="row g-3">
+    <form class="row g-3" method="GET" action="{% url 'explore:my_explore' %}">
         <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Name or Keyword" />
+            <input type="text" name="q" class="form-control" placeholder="Name or Keyword" />
         </div>
         <div class="col-md-2">
-            <select class="form-select">
-                <option selected>Age Range</option>
-                <option>25-30</option>
-                <option>30-35</option>
-                <option>35-40</option>
+            <select class="form-select" name="age_range">
+                <option value="" selected>Age Range</option>
+                <option value="">25-30</option>
+                <option value="">30-35</option>
+                <option value="">35-40</option>
             </select>
         </div>
         <div class="col-md-2">
-            <select class="form-select">
-                <option selected>Location</option>
-                <option>Dhaka</option>
-                <option>Delhi</option>
-                <option>Mumbai</option>
+            <select class="form-select" name="location">
+                <option value="" selected>Location</option>
+                <option value="">Dhaka</option>
+                <option value="">Delhi</option>
+                <option value="">Mumbai</option>
             </select>
         </div>
         <div class="col-md-2">
-            <select class="form-select">
-                <option selected>Religion</option>
-                <option>Hindu</option>
-                <option>Muslim</option>
-                <option>Christian</option>
+            <select class="form-select" name="religion">
+                <option value="" selected>Religion</option>
+                <option value="">Hindu</option>
+                <option value="">Muslim</option>
+                <option value="">Christian</option>
             </select>
         </div>
         <div class="col-md-3 d-grid">
@@ -61,12 +61,13 @@
 <!-- Search Results -->
 <div class="row g-4 mt-3">
     <!-- Result Card -->
+    {% for user in search_result %}
     <div class="col-md-4">
         <div class="card result-card shadow-sm">
             <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile" />
             <div class="card-body">
-                <h5 class="card-title">Sophia Sharma, 28</h5>
-                <p class="card-text">Software Engineer | New Delhi</p>
+                <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
+                <p class="card-text">{{ user.matrimony_profile.occupation }} | {{ user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
                     <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
                     <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
@@ -74,35 +75,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Result Card -->
-    <div class="col-md-4">
-        <div class="card result-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Profile" />
-            <div class="card-body">
-                <h5 class="card-title">Arjun Kumar, 30</h5>
-                <p class="card-text">Entrepreneur | Bangalore</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Result Card -->
-    <div class="col-md-4">
-        <div class="card result-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Profile" />
-            <div class="card-body">
-                <h5 class="card-title">Priya Singh, 26</h5>
-                <p class="card-text">Teacher | Mumbai</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 {% endblock %}
