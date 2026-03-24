@@ -26,30 +26,34 @@
 <div class="search-bar">
     <form class="row g-3" method="GET" action="{% url 'explore:my_explore' %}">
         <div class="col-md-3">
-            <input type="text" name="q" class="form-control" placeholder="Name or Keyword" />
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Name or Keyword" />
         </div>
         <div class="col-md-2">
             <select class="form-select" name="age_range">
-                <option value="" selected>Age Range</option>
-                <option value="">25-30</option>
-                <option value="">30-35</option>
-                <option value="">35-40</option>
+                <option value="" {% if not age_range %} selected {% endif %}>Age Range</option>
+                <option value="25-30" {% if age_range == "25-30" %} selected {% endif %}>25-30</option>
+                <option value="30-35" {% if age_range == "30-35" %} selected {% endif %}>30-35</option>
+                <option value="35-40" {% if age_range == "35-40" %} selected {% endif %}>35-40</option>
             </select>
         </div>
         <div class="col-md-2">
             <select class="form-select" name="location">
-                <option value="" selected>Location</option>
-                <option value="">Dhaka</option>
-                <option value="">Delhi</option>
-                <option value="">Mumbai</option>
+                <option value="" {% if not location %} selected {% endif %}>Location</option>
+                {% for country in countries %}
+                    <option value="{{ country.id }}" {% if location == country.id|slugify %} selected {% endif %}>
+                        {{ country.name }}
+                    </option>
+                {% endfor %}
             </select>
         </div>
         <div class="col-md-2">
             <select class="form-select" name="religion">
-                <option value="" selected>Religion</option>
-                <option value="">Hindu</option>
-                <option value="">Muslim</option>
-                <option value="">Christian</option>
+                <option value="" {% if not religion %} selected {% endif %} selected>Religion</option>
+                <option {% if religion == "hindu" %} selected {% endif %} value="hindu">Hindu</option>
+                <option {% if religion == "muslim" %} selected {% endif %} value="muslim">Muslim</option>
+                <option {% if religion == "christian" %} selected {% endif %} value="christian">Christian</option>
+                <option {% if religion == "sikh" %} selected {% endif %} value="sikh">Sikh</option>
+                <option {% if religion == "other" %} selected {% endif %} value="other">Other</option>
             </select>
         </div>
         <div class="col-md-3 d-grid">
