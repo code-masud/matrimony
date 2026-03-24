@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.urls import reverse, resolve, NoReverseMatch
 from django.utils.translation import get_language, activate
 
+
 class ProfileCompleteMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -15,6 +16,8 @@ class ProfileCompleteMiddleware:
             'accounts:update_profile',
             'accounts:create_preference',
             'accounts:update_preference',
+            'accounts:ajax_load_states',
+            'accounts:ajax_load_cities',
             'company:home',
             'account_logout',
         ]

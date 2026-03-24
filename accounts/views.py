@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from .models import User
 from profiles.models import MatrimonyProfile, PartnerPreference, ProfilePhoto
 from .forms import CustomUserChangeForm, MatrimonyProfileForm, PartnerPreferenceForm, ProfilePhotoForm, GalleryImageForm
-
+from cities_light.models import Region, City
 # Create your views here.
 
 
@@ -157,3 +157,15 @@ class GalleryUpdate(HtmxFormMixin, UpdateView):
     success_url = reverse_lazy('accounts:my_profile')
     permission_required = ['accounts:add_user']
     htmx_trigger = 'closeModal'
+
+
+def load_states(request):
+    country_id = request.GET.get('country')
+    states = Region.objects.filter(country_id=country_id).order_by('name')
+    return render(request, 'accounts/partials/dropdown_list_options.html', {'items': states})
+
+
+def load_cities(request):
+    state_id = request.GET.get('state')
+    cities = City.objects.filter(region_id=state_id).order_by('name')
+    return render(request, 'accounts/partials/dropdown_list_options.html', {'items': cities})

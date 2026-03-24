@@ -12,4 +12,6 @@ urlpatterns = [
     path('profile/<int:pk>/update/', UpdateMatrimonyProfile.as_view(), name="update_profile"),
     path('preference/create/', CreatePartnerPreference.as_view(), name="create_preference"),
     path('preference/<int:pk>/update/', UpdatePartnerPreference.as_view(), name="update_preference"),
+    path('ajax/load-states/', load_states, name='ajax_load_states'),
+    path('ajax/load-cities/', load_cities, name='ajax_load_cities'),
 ]
