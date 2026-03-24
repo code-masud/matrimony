@@ -1,0 +1,39 @@
+from django.shortcuts import redirect
+from django.urls import reverse, resolve, NoReverseMatch
+from django.utils.translation import get_language, activate
+
+class ProfileCompleteMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.exempt_view_names = [
+            'accounts:my_profile',
+            'accounts:update_user',
+            'accounts:create_gallery',
+            'accounts:update_gallery',
+            'accounts:profile_image',
+            'accounts:create_profile',
+            'accounts:update_profile',
+            'accounts:create_preference',
+            'accounts:update_preference',
+            'company:home',
+            'account_logout',
+        ]
+
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            try:
+                current_url_name = resolve(request.path_info).view_name
+            except Exception:
+                current_url_name = None
+
+            is_exempt = current_url_name in self.exempt_view_names
+
+            if not is_exempt:
+                try:
+                    profile = request.user.matrimony_profile
+                    if not profile.is_profile_completed:
+                        return redirect('accounts:my_profile')
+                except AttributeError:
+                    return redirect('accounts:my_profile')
+
+        return self.get_response(request)

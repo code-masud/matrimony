@@ -73,8 +73,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <ul class="list-group">
-          </ul>
+          <ul class="list-group"></ul>
         </div>
         <div class="modal-footer">
           <a
@@ -97,58 +96,65 @@
   <br />
   <div class="profile-card">{% block main %}{% endblock %}</div>
 </div>
+
 <script>
-  const notificationSocket = new WebSocket(
-    `ws://${window.location.host}/ws/notifications/`,
-  );
+  (function () {
+    if (window.notificationSocket) window.notificationSocket.close();
 
-  notificationSocket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    console.log("Notification:", data);
+    window.notificationSocket = new WebSocket(
+      `ws://${window.location.host}/ws/notifications/`,
+    );
 
-    showToast(data.data);
-    addNotificationToList(data.data);
-    updateBadge();
-  };
+    window.notificationSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      console.log("Notification:", data);
 
-  function showToast(data) {
-    const toast = document.createElement("div");
-    toast.className = "toast-notification";
+      showToast(data.data);
+      addNotificationToList(data.data);
+      updateBadge();
+    };
 
-    toast.innerHTML = `
+    function showToast(data) {
+      const toast = document.createElement("div");
+      toast.className = "toast-notification";
+
+      toast.innerHTML = `
     <strong>${data.sender}</strong><br>
     ${data.text}
   `;
 
-    document.body.appendChild(toast);
+      document.body.appendChild(toast);
 
-    setTimeout(() => toast.remove(), 3000);
-  }
-  function addNotificationToList(data) {
-    console.log(data)
-    const list = document.querySelector(".list-group");
+      setTimeout(() => toast.remove(), 3000);
+    }
 
-    const item = document.createElement("li");
-    item.className =
-      "list-group-item d-flex justify-content-between align-items-center";
+    function addNotificationToList(data) {
+      console.log(data);
+      const list = document.querySelector(".list-group");
 
-    item.innerHTML = `
+      const item = document.createElement("li");
+      item.className =
+        "list-group-item d-flex justify-content-between align-items-center";
+
+      item.innerHTML = `
     ${data.text}
     <span class="badge bg-primary rounded-pill">New</span>
   `;
 
-    list.prepend(item);
-  }
-  let unreadCount = 0;
-
-  function updateBadge() {
-    unreadCount++;
-
-    const badge = document.getElementById("notification-count");
-    if (badge) {
-      badge.textContent = unreadCount;
-      badge.style.display = "inline-block";
+      list.prepend(item);
     }
-  }
+
+    let unreadCount = 0;
+
+    function updateBadge() {
+      unreadCount++;
+
+      const badge = document.getElementById("notification-count");
+      if (badge) {
+        badge.textContent = unreadCount;
+        badge.style.display = "inline-block";
+      }
+    }
+  })();
 </script>
 {% endblock %}

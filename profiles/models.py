@@ -31,7 +31,8 @@ class MatrimonyProfile(models.Model):
     )
 
     # Basic Info
-    gender = models.CharField(max_length=10, choices=GenderChoices.choices, db_index=True)
+    gender = models.CharField(
+        max_length=10, choices=GenderChoices.choices, db_index=True)
     date_of_birth = models.DateField()
     height_cm = models.PositiveIntegerField(help_text="Height in centimeters")
     marital_status = models.CharField(
@@ -85,9 +86,38 @@ class MatrimonyProfile(models.Model):
         if not self.date_of_birth:
             return None
         today = date.today()
-        not_yet_reached = (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+        not_yet_reached = (today.month, today.day) < (
+            self.date_of_birth.month, self.date_of_birth.day)
         return today.year - self.date_of_birth.year - not_yet_reached
-    
+
+    def calculate_completion_percentage(self):
+
+        required_fields = [
+            'gender', 'date_of_birth', 'height_cm', 'marital_status',
+            'religion', 'education', 'occupation', 'country',
+            'state', 'city', 'about_me', 'profile_picture'
+        ]
+
+        total_fields = len(required_fields)
+        filled_fields = 0
+
+        for field in required_fields:
+            value = getattr(self, field)
+            if value not in [None, "", [], {}]:
+                filled_fields += 1
+
+        percentage = (filled_fields / total_fields) * 100
+
+        # Auto-update the boolean flag if 100%
+        if percentage == 100 and not self.is_profile_completed:
+            self.is_profile_completed = True
+            self.save(update_fields=['is_profile_completed'])
+        elif percentage < 100 and self.is_profile_completed:
+            self.is_profile_completed = False
+            self.save(update_fields=['is_profile_completed'])
+
+        return round(percentage, 2)
+
     class Meta:
         ordering = ["-created_at"]
         indexes = [
@@ -96,7 +126,7 @@ class MatrimonyProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Profile"
-    
+
 
 class PartnerPreference(models.Model):
 
@@ -136,7 +166,8 @@ class PartnerPreference(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Partner Preference"
-    
+
+
 class ProfilePhoto(models.Model):
 
     user = models.ForeignKey(
@@ -145,7 +176,8 @@ class ProfilePhoto(models.Model):
         related_name="photos"
     )
 
-    image = models.ImageField(upload_to=gallery_image_upload_path, validators=[image_validation],blank=True,null=True)
+    image = models.ImageField(upload_to=gallery_image_upload_path, validators=[
+                              image_validation], blank=True, null=True)
     is_primary = models.BooleanField(default=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
