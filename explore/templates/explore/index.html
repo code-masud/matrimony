@@ -77,13 +77,19 @@
                 <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
                 <p class="card-text">{{ user.matrimony_profile.get_occupation_display }} | {{ user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
+                    {% if user.interest_requested    %}
+                    {% else %}
                     <button type="button"
                             class="btn btn-outline-primary btn-sm send-interest-btn"
                             onclick="sendInterest({{ user.id }}, this)">
                         <i class="bi bi-heart"></i>
                         <span class="btn-text">Send Interest</span>
                     </button>  
+                    {% endif %}
+                    {% if user.shortlisted %}
+                    {% else %}  
                     <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                    {% endif %}
                 </div>
             </div>
         </div>

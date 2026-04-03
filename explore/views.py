@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 from cities_light.models import Country
 from django.db.models import Q
 from datetime import date, timedelta
+from matches.models import InterestRequest, Shortlist
+from django.db.models import OuterRef, Exists
+
 
 User = get_user_model()
 
@@ -15,8 +18,22 @@ class ExploreView(TemplateView):
         context = super().get_context_data(**kwargs)
         request = self.request
 
+        interest_subquery = InterestRequest.objects.filter(
+            sender=request.user,
+            receiver=OuterRef('pk')
+        )
+
+        shortlist_subquery = Shortlist.objects.filter(
+            user=request.user,
+            shortlisted_user=OuterRef('pk')
+        )
+
         results = User.objects.exclude(
-            id=request.user.id).select_related('matrimony_profile')
+            id=request.user.id
+        ).select_related('matrimony_profile').annotate(
+            interest_requested=Exists(interest_subquery),
+            shortlisted=Exists(shortlist_subquery),
+        )
 
         query = request.GET.get('q', "")
         religion = request.GET.get('religion', "")
