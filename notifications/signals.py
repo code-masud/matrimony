@@ -6,19 +6,11 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 
-@receiver(post_save, sender=Message)
+@receiver(post_save, sender=Notification)
 def create_message_notification(sender, instance, created, **kwargs):
     if not created:
         return
 
-    # create notification
-    notification = Notification.objects.create(
-        sender=instance.sender,
-        receiver=instance.receiver,
-        notification_type="message"
-    )
-
-    # send realtime
     channel_layer = get_channel_layer()
 
     async_to_sync(channel_layer.group_send)(
@@ -26,10 +18,10 @@ def create_message_notification(sender, instance, created, **kwargs):
         {
             "type": "notification_broadcast",
             "data": {
-                "id": notification.id,
+                "id": instance.id,
                 "sender": instance.sender.username,
-                "type": "message",
-                "text": f"{instance.sender.username} sent you a message",
+                "type": instance.notification_type,
+                "text": instance.text,
             }
         }
     )
