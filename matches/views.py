@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 
 from django.http import JsonResponse
-from .models import InterestRequest
+from .models import InterestRequest, Shortlist
 from notifications.models import Notification
 
 User = get_user_model()
@@ -45,7 +45,7 @@ def send_interest(request):
     interest, created = InterestRequest.objects.get_or_create(
         sender=request.user,
         receiver=receiver,
-        defaults={  
+        defaults={
             "status": InterestRequest.StatusChoices.PENDING,
             "message": f"{request.user.username} sent you an interest"
         }
@@ -68,4 +68,38 @@ def send_interest(request):
         return JsonResponse({
             "status": "exists",
             "message": "You already sent interest"
+        }, status=200)
+
+
+@login_required
+def make_shortlist(request):
+    receiver_id = request.POST.get('receiver_id')
+
+    if not receiver_id:
+        return JsonResponse({"error": "receiver_id missing"}, status=400)
+
+    receiver = User.objects.get(id=receiver_id)
+
+    interest, created = Shortlist.objects.get_or_create(
+        user=request.user,
+        shortlisted_user=receiver,
+    )
+
+    if created:
+        Notification.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            notification_type="short_list",
+            text=f"{request.user.username} short listed you"
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Shortlisted successfully"
+        })
+
+    else:
+        return JsonResponse({
+            "status": "exists",
+            "message": "You already sent shortlist"
         }, status=200)

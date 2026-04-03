@@ -88,7 +88,10 @@
                     {% endif %}
                     {% if user.shortlisted %}
                     {% else %}  
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                    <button class="btn btn-outline-secondary btn-sm shortlist-btn" onclick="makeShortlist({{ user.id }}, this)">
+                        <i class="bi bi-bookmark"></i>
+                        <span class="shortlist-btn-text">Shortlist</span>
+                    </button>
                     {% endif %}
                 </div>
             </div>
@@ -158,6 +161,49 @@ function sendInterest(userId, btn) {
     .catch(() => {
         btn.disabled = false;
         textSpan.innerHTML = "Send Interest";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+
+function makeShortlist(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".shortlist-btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> shortlisting...`;
+
+    fetch("{% url 'matches:make_shortlist' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Shortlisted ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Shortlisted!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already shortlisted";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already shortlisted!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Shortlisted";
         showToast("❌ Something went wrong", "danger");
     });
 }
