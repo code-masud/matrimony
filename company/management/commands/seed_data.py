@@ -49,7 +49,7 @@ class Command(BaseCommand):
         last_name = fake.last_name()
 
         # Create Users + Profiles + Preferences
-        for _ in range(50):  # number of users
+        for _ in range(100):  # number of users
             user = User.objects.create_user(
                 username=fake.unique.user_name(),
                 email=fake.unique.email(),
