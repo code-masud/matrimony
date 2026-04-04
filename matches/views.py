@@ -117,3 +117,39 @@ def make_shortlist(request):
             "status": "exists",
             "message": "You already sent shortlist"
         }, status=200)
+
+
+@login_required
+def remove_shortlist(request):
+    receiver_id = request.POST.get('receiver_id')
+
+    if not receiver_id:
+        return JsonResponse({"error": "receiver_id missing"}, status=400)
+
+    receiver = User.objects.get(id=receiver_id)
+
+    shortlist = Shortlist.objects.get(
+        user=request.user,
+        shortlisted_user=receiver,
+    )
+
+    if shortlist:
+        shortlist.delete()
+
+        Notification.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            notification_type="short_list",
+            text=f"{request.user.username} remove you from short list"
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "message": "Shortlist remove successfully"
+        })
+
+    else:
+        return JsonResponse({
+            "status": "exists",
+            "message": "Shortlist does not exist"
+        }, status=200)
