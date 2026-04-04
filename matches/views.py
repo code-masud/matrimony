@@ -2,10 +2,10 @@ from email import message
 
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-
+from django.db.models import OuterRef, Exists
 from django.http import JsonResponse
 from .models import InterestRequest, Shortlist
 from notifications.models import Notification
@@ -24,8 +24,22 @@ class MatchesView(TemplateView):
         return context
 
 
-class ShortListView(TemplateView):
+class ShortListView(ListView):
     template_name = 'matches/shortlist.html'
+    context_object_name = 'shortlists'
+
+    def get_queryset(self):
+        interest_subquery = InterestRequest.objects.filter(
+            sender=self.request.user,
+            receiver=OuterRef('shortlisted_user')
+        )
+        return (
+            Shortlist.objects
+            .filter(user=self.request.user)
+            .select_related('shortlisted_user__matrimony_profile')
+            .annotate(has_interest=Exists(interest_subquery))
+            .order_by('-created_at')
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

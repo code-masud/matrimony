@@ -1,4 +1,5 @@
 {% extends "profile.html" %} {% block main %}
+{% load static %}
 <style>
     body {
         background-color: #f8f9fa;
@@ -18,51 +19,27 @@
 <!-- Shortlist Grid -->
 <div class="row g-4">
     <!-- Shortlist Card -->
+    {% for user in shortlists %}
     <div class="col-md-4">
         <div class="card shortlist-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Profile" />
+            {% if user.shortlisted_user.matrimony_profile.profile_picture %}
+            <img src="{{ user.shortlisted_user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+            {% else %}
+            <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+            {% endif %}
             <div class="card-body">
-                <h5 class="card-title">Sophia Sharma, 28</h5>
-                <p class="card-text">Software Engineer | New Delhi</p>
+                <h5 class="card-title">{{ user.shortlisted_user.get_full_name }}, {{ user.shortlisted_user.matrimony_profile.age }}</h5>
+                <p class="card-text">{{ user.shortlisted_user.matrimony_profile.get_occupation_display }} | {{ user.shortlisted_user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
+                    {% if user.has_interest %}
+                    {% else %}
                     <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
+                    {% endif %}
                     <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Shortlist Card -->
-    <div class="col-md-4">
-        <div class="card shortlist-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Profile" />
-            <div class="card-body">
-                <h5 class="card-title">Arjun Kumar, 30</h5>
-                <p class="card-text">Entrepreneur | Bangalore</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
-                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Shortlist Card -->
-    <div class="col-md-4">
-        <div class="card shortlist-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Profile" />
-            <div class="card-body">
-                <h5 class="card-title">Priya Singh, 26</h5>
-                <p class="card-text">Teacher | Mumbai</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-chat"></i> Chat</button>
-                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
 </div>
 {% endblock %}
