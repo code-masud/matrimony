@@ -1,0 +1,232 @@
+{% extends "profile.html" %} {% block main %}
+{% load static %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .shortlist-card img {
+        height: 220px;
+        object-fit: cover;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="text-center mb-4">
+    <h2 class="fw-bold">Your Interest</h2>
+    <p class="text-muted">Profiles you’ve interest for consideration</p>
+</div>
+
+<!-- Shortlist Grid -->
+<div class="row g-4">
+    <!-- Shortlist Card -->
+    {% for user in interests %}
+    <div class="col-md-4">
+        <div class="card shortlist-card shadow-sm">
+            <a href="{% url 'profiles:detail' user.shortlisted_user.id %}">
+                {% if user.shortlisted_user.matrimony_profile.profile_picture %}
+                <img src="{{ user.shortlisted_user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+                {% else %}
+                <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+                {% endif %}
+            </a>
+            <div class="card-body">
+                <h5 class="card-title">{{ user.shortlisted_user.get_full_name }}, {{ user.shortlisted_user.matrimony_profile.age }}</h5>
+                <p class="card-text">{{ user.shortlisted_user.matrimony_profile.get_occupation_display }} | {{ user.shortlisted_user.matrimony_profile.country }}</p>
+                <div class="d-flex justify-content-between">
+                    {% if user.has_interest %}
+                    {% else %}
+                    <button type="button"   
+                            class="btn btn-outline-primary btn-sm send-interest-btn"
+                            onclick="sendInterest({{ user.shortlisted_user.id }}, this)">
+                        <i class="bi bi-heart"></i>
+                        <span class="btn-text">Send Interest</span>
+                    </button>
+                    {% endif %}
+                    <button class="btn btn-outline-danger btn-sm remove-btn" onclick="removeShortlist({{ user.shortlisted_user.id }}, this)">
+                        <i class="bi bi-trash"></i>
+                        <span class="remove-btn-text">Remove</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if is_paginated %}   
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page=1">
+                        &laquo;
+                    </a>
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}">
+                        Previous
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ num }}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}">
+                        Next
+                    </a>
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.paginator.num_pages }}">
+                        &raquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+        {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+<script>
+function getCSRFToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken'))
+        ?.split('=')[1];
+}
+
+function showToast(message, type="success") {
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3 show`;
+    toast.style.zIndex = "9999";
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function sendInterest(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+
+    fetch("{% url 'matches:send_interest' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Sent ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Interest sent!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already Sent";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already sent interest!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Send Interest";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+
+function removeShortlist(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".remove-btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> removing...`;
+
+    fetch("{% url 'matches:remove_shortlist' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Removed ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Removed!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Not Found";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Not Found!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Removed";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+</script>
+{% endblock %}

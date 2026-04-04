@@ -24,6 +24,30 @@ class MatchesView(TemplateView):
         return context
 
 
+class InterestView(ListView):
+    template_name = 'matches/interest.html'
+    context_object_name = 'interests'
+    paginate_by = 6
+
+    def get_queryset(self):
+        interest_subquery = InterestRequest.objects.filter(
+            sender=self.request.user,
+            receiver=OuterRef('shortlisted_user')
+        )
+        return (
+            Shortlist.objects
+            .filter(user=self.request.user)
+            .select_related('shortlisted_user__matrimony_profile')
+            .annotate(has_interest=Exists(interest_subquery))
+            .order_by('-created_at')
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Shortlist'
+        return context
+
+
 class ShortListView(ListView):
     template_name = 'matches/shortlist.html'
     context_object_name = 'shortlists'
