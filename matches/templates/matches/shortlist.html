@@ -22,11 +22,13 @@
     {% for user in shortlists %}
     <div class="col-md-4">
         <div class="card shortlist-card shadow-sm">
-            {% if user.shortlisted_user.matrimony_profile.profile_picture %}
-            <img src="{{ user.shortlisted_user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
-            {% else %}
-            <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
-            {% endif %}
+            <a href="{% url 'profiles:detail' user.shortlisted_user.id %}">
+                {% if user.shortlisted_user.matrimony_profile.profile_picture %}
+                <img src="{{ user.shortlisted_user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+                {% else %}
+                <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+                {% endif %}
+            </a>
             <div class="card-body">
                 <h5 class="card-title">{{ user.shortlisted_user.get_full_name }}, {{ user.shortlisted_user.matrimony_profile.age }}</h5>
                 <p class="card-text">{{ user.shortlisted_user.matrimony_profile.get_occupation_display }} | {{ user.shortlisted_user.matrimony_profile.country }}</p>
