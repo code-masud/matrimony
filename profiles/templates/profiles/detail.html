@@ -22,8 +22,22 @@
         <img src="{% static 'avatar/male.png' %}" class="profile-photo mb-3" alt="Profile" />
         {% endif %}
         <div class="d-flex justify-content-center gap-2">
-            <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+            {% if user.interest_requested %}
+            {% else %}
+            <button type="button"
+                    class="btn btn-outline-primary btn-sm send-interest-btn"
+                    onclick="sendInterest({{ user.id }}, this)">
+                <i class="bi bi-heart"></i>
+                <span class="btn-text">Send Interest</span>
+            </button>  
+            {% endif %}
+            {% if user.shortlisted %}
+            {% else %}  
+            <button class="btn btn-outline-secondary btn-sm shortlist-btn" onclick="makeShortlist({{ user.id }}, this)">
+                <i class="bi bi-bookmark"></i>
+                <span class="shortlist-btn-text">Shortlist</span>
+            </button>
+            {% endif %}
         </div>
     </div>
 
@@ -75,5 +89,113 @@
         {% endfor %}
     </div>
 </div>
+<script>
+function getCSRFToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken'))
+        ?.split('=')[1];
+}
 
+function showToast(message, type="success") {
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3 show`;
+    toast.style.zIndex = "9999";
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function sendInterest(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+
+    fetch("{% url 'matches:send_interest' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Sent ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Interest sent!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already Sent";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already sent interest!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Send Interest";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+
+function makeShortlist(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".shortlist-btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> shortlisting...`;
+
+    fetch("{% url 'matches:make_shortlist' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Shortlisted ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Shortlisted!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already shortlisted";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already shortlisted!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Shortlisted";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+</script>
 {% endblock %}

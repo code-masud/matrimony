@@ -79,7 +79,7 @@
                 <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
                 <p class="card-text">{{ user.matrimony_profile.get_occupation_display }} | {{ user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
-                    {% if user.interest_requested    %}
+                    {% if user.interest_requested %}
                     {% else %}
                     <button type="button"
                             class="btn btn-outline-primary btn-sm send-interest-btn"
