@@ -4,7 +4,6 @@ from django.core.files.base import ContentFile
 from faker import Faker
 import random
 import requests
-from datetime import date
 
 from profiles.models import (
     AnnualIncomeChoices, EducationChoices, GenderChoices,
@@ -36,20 +35,33 @@ class Command(BaseCommand):
             response = requests.get(url)
             return ContentFile(response.content, name=f"gallery_{fake.uuid4()}.jpg")
 
-        country_instance = Country.objects.order_by('?').first()
+        country = Country.objects.order_by('?').first()
+        region = Region.objects.filter(country=country).order_by('?').first()
+        city = City.objects.filter(region=region).order_by('?').first()
+
+        gender = get_choice(GenderChoices.choices)
+
+        if gender.lower() == "male":
+            first_name = fake.first_name_male()
+        else:
+            first_name = fake.first_name_female()
+
+        last_name = fake.last_name()
 
         # Create Users + Profiles + Preferences
         for _ in range(50):  # number of users
             user = User.objects.create_user(
                 username=fake.unique.user_name(),
                 email=fake.unique.email(),
+                first_name=first_name,
+                last_name=last_name,
                 phone=fake.unique.phone_number(),
                 on_behalf="self",
                 password="password123"
             )
 
             # Create MatrimonyProfile
-            gender = get_choice(GenderChoices.choices)
+
             dob = fake.date_of_birth(minimum_age=20, maximum_age=40)
             profile = MatrimonyProfile.objects.create(
                 user=user,
@@ -62,9 +74,9 @@ class Command(BaseCommand):
                 education=get_choice(EducationChoices.choices),
                 occupation=get_choice(OccupationChoices.choices),
                 annual_income=get_choice(AnnualIncomeChoices.choices),
-                country=country_instance,
-                state=Region.objects.order_by('?').first(),
-                city=City.objects.order_by('?').first(),
+                country=country,
+                state=region,
+                city=city,
                 about_me=fake.text(max_nb_chars=120),
                 profile_picture=get_fake_avatar()
             )
@@ -85,9 +97,9 @@ class Command(BaseCommand):
                 marital_status=get_choice(MaritalStatusChoices.choices),
                 education=get_choice(EducationChoices.choices),
                 occupation=get_choice(OccupationChoices.choices),
-                country=country_instance,
-                state=Region.objects.order_by('?').first(),
-                city=City.objects.order_by('?').first(),
+                country=country,
+                state=region,
+                city=city,
             )
 
             # Gallery Photos (1-5)
@@ -109,7 +121,7 @@ class Command(BaseCommand):
             users.append(user)
 
         self.stdout.write(self.style.SUCCESS(
-            "✅ Users, profiles, preferences, and images created"))
+            "Users, profiles, preferences, and images created"))
 
         # Create Shortlists
         for user in users:
@@ -121,7 +133,7 @@ class Command(BaseCommand):
                     shortlisted_user=target
                 )
 
-        self.stdout.write(self.style.SUCCESS("✅ Shortlists created"))
+        self.stdout.write(self.style.SUCCESS("Shortlists created"))
 
         # Create Interest Requests
         for _ in range(100):
@@ -139,4 +151,4 @@ class Command(BaseCommand):
                 }
             )
 
-        self.stdout.write(self.style.SUCCESS("✅ Interest requests created"))
+        self.stdout.write(self.style.SUCCESS("Interest requests created"))
