@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import User
 
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     model = User
@@ -19,6 +20,7 @@ class UserAdmin(BaseUserAdmin):
         'date_joined',
     )
     list_display_links = ('id', 'username', 'phone', 'email')
+    list_per_page = 10
     list_filter = (
         'is_verified',
         'is_staff',
