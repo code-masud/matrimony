@@ -5,6 +5,7 @@ from services.uploads import avatar_upload_path, gallery_image_upload_path
 from services.validations import image_validation
 from cities_light.models import Country, Region, City
 
+
 class EducationChoices(models.TextChoices):
     # Undergraduate
     BTECH = "btech", "B.Tech / B.E."
@@ -196,9 +197,12 @@ class MatrimonyProfile(models.Model):
     )
 
     # Location
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
-    state = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    country = models.ForeignKey(
+        Country, on_delete=models.SET_NULL, null=True, blank=True)
+    state = models.ForeignKey(
+        Region, on_delete=models.SET_NULL, null=True, blank=True)
+    city = models.ForeignKey(
+        City, on_delete=models.SET_NULL, null=True, blank=True)
 
     # About
     about_me = models.TextField(blank=True)
@@ -276,12 +280,12 @@ class PartnerPreference(models.Model):
     # Height Preference
     min_height_cm = models.PositiveIntegerField(
         choices=get_height_choices(),
-        null=True, 
+        null=True,
         blank=True
     )
     max_height_cm = models.PositiveIntegerField(
-        choices=get_height_choices(), 
-        null=True, 
+        choices=get_height_choices(),
+        null=True,
         blank=True
     )
 
@@ -308,10 +312,13 @@ class PartnerPreference(models.Model):
         choices=OccupationChoices.choices,
         default=OccupationChoices.OTHER
     )
-    
-    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
-    state = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+
+    country = models.ForeignKey(
+        Country, on_delete=models.SET_NULL, null=True, blank=True)
+    state = models.ForeignKey(
+        Region, on_delete=models.SET_NULL, null=True, blank=True)
+    city = models.ForeignKey(
+        City, on_delete=models.SET_NULL, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

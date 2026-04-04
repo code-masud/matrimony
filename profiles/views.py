@@ -7,11 +7,21 @@ User = get_user_model()
 
 # Create your views here.
 
+
 class ProfileDetail(DetailView):
     model = User
     template_name = 'profiles/detail.html'
 
+    def get_queryset(self):
+        queryset = User.objects.filter(pk=self.kwargs['pk']).select_related(
+            'matrimony_profile',
+            'partner_preference',
+        ).prefetch_related(
+            'photos'
+        )
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f'Detail - {self.get_object().username}'
+        context["title"] = f'Detail - {self.get_object().get_full_name()}'
         return context
