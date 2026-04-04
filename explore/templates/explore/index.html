@@ -68,11 +68,13 @@
     {% for user in search_result %}
     <div class="col-md-4">
         <div class="card result-card shadow-sm">
-            {% if user.matrimony_profile.profile_picture %}
-            <img src="{{ user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
-            {% else %}
-            <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
-            {% endif %}
+            <a href="{% url 'profiles:detail' user.id %}">
+                {% if user.matrimony_profile.profile_picture %}
+                <img src="{{ user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+                {% else %}
+                <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+                {% endif %}
+            </a>
             <div class="card-body">
                 <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
                 <p class="card-text">{{ user.matrimony_profile.get_occupation_display }} | {{ user.matrimony_profile.country }}</p>
