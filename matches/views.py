@@ -27,6 +27,7 @@ class MatchesView(TemplateView):
 class ShortListView(ListView):
     template_name = 'matches/shortlist.html'
     context_object_name = 'shortlists'
+    paginate_by = 6
 
     def get_queryset(self):
         interest_subquery = InterestRequest.objects.filter(
