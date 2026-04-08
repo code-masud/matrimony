@@ -126,15 +126,15 @@
     <ul class="list-group list-group-flush">
       {% for user in users %}
       <li
-        hx-get="{% url 'chat:private_chat' user.id %}"
+        hx-get="{% url 'chat:private_chat' user.receiver.id %}"
         hx-target="#chat-window"
         hx-swap="outerHTML"
         class="list-group-item d-flex align-items-center gap-2"
       >
         <img
           class="rounded-circle avatar"
-          src="{% if user.matrimony_profile.profile_picture %}
-            {{ user.matrimony_profile.profile_picture.url }}
+          src="{% if user.receiver.matrimony_profile.profile_picture %}
+            {{ user.receiver.matrimony_profile.profile_picture.url }}
           {% else %}
             {% static 'avatar/male.png' %}
           {% endif %}"
@@ -142,12 +142,12 @@
 
         <div class="flex-grow-1">
           <div class="fw-semibold">
-            {{ user.username }}
+            {{ user.receiver.username }}
             <span
-              class="presence_status_online_{{ user.id }} status-dot online {% if not user|is_presence %}d-none{% endif %}"
+              class="presence_status_online_{{ user.receiver.id }} status-dot online {% if not user|is_presence %}d-none{% endif %}"
             ></span>
             <span
-              class="presence_status_offline_{{ user.id }} status-dot offline {% if user|is_presence %}d-none{% endif %}"
+              class="presence_status_offline_{{ user.receiver.id }} status-dot offline {% if user|is_presence %}d-none{% endif %}"
             ></span>
           </div>
         </div>
