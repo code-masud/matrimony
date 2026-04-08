@@ -39,3 +39,9 @@ class MatrimonyProfileAdmin(admin.ModelAdmin):
         'is_profile_completed',
     )
     list_per_page = 10
+
+
+@admin.register(PartnerPreference)
+class PartnerPreferenceAdmin(admin.ModelAdmin):
+    model = PartnerPreference
+    
