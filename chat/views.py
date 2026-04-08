@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from .models import Message
+from matches.models import InterestRequest
 
 User = get_user_model()
 
@@ -15,7 +16,11 @@ class ChatView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        users = User.objects.exclude(id=self.request.user.id)
+        # users = User.objects.exclude(id=self.request.user.id)
+        users = InterestRequest.objects.filter(
+            sender=self.request.user,
+            status=InterestRequest.StatusChoices.ACCEPTED
+        ).select_related('receiver__matrimony_profile')
         context["title"] = 'Chat'
         context["users"] = users
         return context
