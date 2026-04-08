@@ -22,30 +22,37 @@
     {% for user in interests %}
     <div class="col-md-4">
         <div class="card shortlist-card shadow-sm">
-            <a href="{% url 'profiles:detail' user.shortlisted_user.id %}">
-                {% if user.shortlisted_user.matrimony_profile.profile_picture %}
-                <img src="{{ user.shortlisted_user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+            <a href="{% url 'profiles:detail' user.receiver.id %}">
+                {% if user.receiver.matrimony_profile.profile_picture %}
+                <img src="{{ user.receiver.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
                 {% else %}
                 <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
                 {% endif %}
             </a>
             <div class="card-body">
-                <h5 class="card-title">{{ user.shortlisted_user.get_full_name }}, {{ user.shortlisted_user.matrimony_profile.age }}</h5>
-                <p class="card-text">{{ user.shortlisted_user.matrimony_profile.get_occupation_display }} | {{ user.shortlisted_user.matrimony_profile.country }}</p>
+                <h5 class="card-title">{{ user.receiver.get_full_name }}, {{ user.receiver.matrimony_profile.age }}</h5>
+                <p class="card-text">{{ user.receiver.matrimony_profile.get_occupation_display }} | {{ user.receiver.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
-                    {% if user.has_interest %}
+                    {% if user.status == 'accepted' %}
+                    <a href="{% url 'chat:my_chat' %}" type="button" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-chat"></i>
+                        <span class="btn-text">Chat</span>
+                    </a>
                     {% else %}
                     <button type="button"   
                             class="btn btn-outline-primary btn-sm send-interest-btn"
-                            onclick="sendInterest({{ user.shortlisted_user.id }}, this)">
+                            onclick="sendInterest({{ user.receiver.id }}, this)">
                         <i class="bi bi-heart"></i>
-                        <span class="btn-text">Send Interest</span>
+                        <span class="btn-text">{{ user.status|title }}</span>
                     </button>
                     {% endif %}
-                    <button class="btn btn-outline-danger btn-sm remove-btn" onclick="removeShortlist({{ user.shortlisted_user.id }}, this)">
-                        <i class="bi bi-trash"></i>
-                        <span class="remove-btn-text">Remove</span>
+                    {% if user.has_shortlist %}
+                    {% else %}
+                    <button class="btn btn-outline-secondary btn-sm shortlist-btn" onclick="makeShortlist({{ user.id }}, this)">
+                        <i class="bi bi-bookmark"></i>
+                        <span class="shortlist-btn-text">Shortlist</span>
                     </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -143,15 +150,15 @@ function showToast(message, type="success") {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function sendInterest(userId, btn) {
+function makeShortlist(userId, btn) {
     if (btn.disabled) return;
 
-    const textSpan = btn.querySelector(".btn-text");
+    const textSpan = btn.querySelector(".shortlist-btn-text");
 
     btn.disabled = true;
-    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> shortlisting...`;
 
-    fetch("{% url 'matches:send_interest' %}", {
+    fetch("{% url 'matches:make_shortlist' %}", {
         method: "POST",
         credentials: "same-origin",
         headers: {
@@ -163,17 +170,17 @@ function sendInterest(userId, btn) {
     .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
-            textSpan.innerHTML = "Sent ✔";
+            textSpan.innerHTML = "Shortlisted ✔";
             btn.classList.remove("btn-outline-primary");
             btn.classList.add("btn-success");
 
-            showToast("✅ Interest sent!", "success");
+            showToast("✅ Shortlisted!", "success");
 
         } else if (data.status === "exists") {
-            textSpan.innerHTML = "Already Sent";
+            textSpan.innerHTML = "Already shortlisted";
             btn.classList.add("btn-secondary");
 
-            showToast("⚠️ Already sent interest!", "warning");
+            showToast("⚠️ Already shortlisted!", "warning");
 
         } else {
             throw new Error();
@@ -181,50 +188,7 @@ function sendInterest(userId, btn) {
     })
     .catch(() => {
         btn.disabled = false;
-        textSpan.innerHTML = "Send Interest";
-        showToast("❌ Something went wrong", "danger");
-    });
-}
-
-function removeShortlist(userId, btn) {
-    if (btn.disabled) return;
-
-    const textSpan = btn.querySelector(".remove-btn-text");
-
-    btn.disabled = true;
-    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> removing...`;
-
-    fetch("{% url 'matches:remove_shortlist' %}", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": getCSRFToken()
-        },
-        body: "receiver_id=" + userId
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            textSpan.innerHTML = "Removed ✔";
-            btn.classList.remove("btn-outline-primary");
-            btn.classList.add("btn-success");
-
-            showToast("✅ Removed!", "success");
-
-        } else if (data.status === "exists") {
-            textSpan.innerHTML = "Not Found";
-            btn.classList.add("btn-secondary");
-
-            showToast("⚠️ Not Found!", "warning");
-
-        } else {
-            throw new Error();
-        }
-    })
-    .catch(() => {
-        btn.disabled = false;
-        textSpan.innerHTML = "Removed";
+        textSpan.innerHTML = "Shortlisted";
         showToast("❌ Something went wrong", "danger");
     });
 }
