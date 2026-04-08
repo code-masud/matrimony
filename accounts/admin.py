@@ -11,6 +11,8 @@ class UserAdmin(BaseUserAdmin):
     list_display = (
         'id',
         'username',
+        'first_name',
+        'last_name',
         'phone',
         'email',
         'on_behalf',
@@ -19,7 +21,8 @@ class UserAdmin(BaseUserAdmin):
         'is_active',
         'date_joined',
     )
-    list_display_links = ('id', 'username', 'phone', 'email')
+    list_display_links = ('id', 'username', 'first_name',
+                          'last_name', 'phone', 'email')
     list_per_page = 10
     list_filter = (
         'is_verified',
