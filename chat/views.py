@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -10,19 +10,20 @@ from matches.models import InterestRequest
 User = get_user_model()
 
 
-class ChatView(LoginRequiredMixin, TemplateView):
+class ChatView(LoginRequiredMixin, ListView):
     template_name = 'chat/room.html'
     # permission_required = ['chat.view_chat']
+    context_object_name = 'users'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # users = User.objects.exclude(id=self.request.user.id)
-        users = InterestRequest.objects.filter(
+    def get_queryset(self):
+        return InterestRequest.objects.filter(
             sender=self.request.user,
             status=InterestRequest.StatusChoices.ACCEPTED
         ).select_related('receiver__matrimony_profile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context["title"] = 'Chat'
-        context["users"] = users
         return context
 
 
