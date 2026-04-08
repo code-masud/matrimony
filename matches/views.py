@@ -30,21 +30,21 @@ class InterestView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        interest_subquery = InterestRequest.objects.filter(
-            sender=self.request.user,
-            receiver=OuterRef('shortlisted_user')
+        shortlist_subquery = Shortlist.objects.filter(
+            user=self.request.user,
+            shortlisted_user=OuterRef("receiver")
         )
         return (
-            Shortlist.objects
-            .filter(user=self.request.user)
-            .select_related('shortlisted_user__matrimony_profile')
-            .annotate(has_interest=Exists(interest_subquery))
+            InterestRequest.objects
+            .filter(sender=self.request.user)
+            .select_related('receiver__matrimony_profile')
+            .annotate(has_shortlist=Exists(shortlist_subquery))
             .order_by('-created_at')
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = 'Shortlist'
+        context["title"] = 'Interest'
         return context
 
 
