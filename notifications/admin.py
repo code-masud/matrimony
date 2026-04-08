@@ -10,3 +10,4 @@ class NotificationAdmin(admin.ModelAdmin):
 
     list_display = ['sender', 'receiver',
                     'notification_type', 'text', 'is_read', 'created_at']
+    list_per_page = 10
