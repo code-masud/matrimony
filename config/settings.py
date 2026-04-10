@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+from celery.beat import crontab
 import os
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
@@ -108,6 +109,14 @@ CHANNEL_LAYERS = {
 REDIS_URL = os.getenv('CHANNEL_LAYER_HOSTS')
 
 CELERY_BROKER_URL = os.getenv('CHANNEL_LAYER_HOSTS')
+
+
+CELERY_BEAT_SCHEDULE = {
+    "send-profile-view-digest": {
+        "task": "profiles.tasks.send_profile_view_digest",
+        "schedule": crontab(minute=10),
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

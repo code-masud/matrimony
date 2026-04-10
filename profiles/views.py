@@ -6,13 +6,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth import get_user_model
 from matches.models import InterestRequest, Shortlist
 from django.db.models import OuterRef, Exists
-from django.core.cache import cache
-from .tasks import send_profile_view_email
 from .models import ProfileView
 
 User = get_user_model()
-
-# Create your views here.
 
 
 class ProfileDetail(DetailView):

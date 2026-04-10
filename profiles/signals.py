@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from accounts.models import User
 from .models import ProfilePhoto, MatrimonyProfile, ProfileView
-from .tasks import send_profile_view_email
 
 
 def delete_file(filename):
@@ -40,12 +39,3 @@ def on_change_remove_old_gallery_image(sender, instance, **kwargs):
     # If the image has changed, delete the old file
     if old_instance.image and old_instance.image != instance.image:
         delete_file(old_instance.image.name)
-
-
-@receiver(post_save, sender=ProfileView)
-def profile_view_created(sender, instance, created, **kwargs):
-    if created:
-        send_profile_view_email.delay(
-            instance.viewed.id,
-            instance.viewer.id
-        )
