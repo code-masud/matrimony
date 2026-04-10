@@ -107,6 +107,8 @@ CHANNEL_LAYERS = {
 
 REDIS_URL = os.getenv('CHANNEL_LAYER_HOSTS')
 
+CELERY_BROKER_URL = os.getenv('CHANNEL_LAYER_HOSTS')
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 

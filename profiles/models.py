@@ -344,3 +344,26 @@ class ProfilePhoto(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Photo"
+
+
+class ProfileView(models.Model):
+    viewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='views_made'
+    )
+    viewed = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='views_received'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['viewer', 'viewed']),
+            models.Index(fields=['created_at'])
+        ]
+
+    def __str__(self):
+        return f"{self.viewer} → {self.viewed}"
