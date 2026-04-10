@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     'cities_light',
 
+    "django_celery_beat",
+
     'company.apps.CompanyConfig',
     'accounts.apps.AccountsConfig',
     'profiles.apps.ProfilesConfig',
@@ -109,14 +111,19 @@ CHANNEL_LAYERS = {
 REDIS_URL = os.getenv('CHANNEL_LAYER_HOSTS')
 
 CELERY_BROKER_URL = os.getenv('CHANNEL_LAYER_HOSTS')
+CELERY_RESULT_BACKEND = os.getenv('CHANNEL_LAYER_HOSTS')
 
+CELERY_TIMEZONE = "Asia/Dhaka"
+CELERY_ENABLE_UTC = False
 
-CELERY_BEAT_SCHEDULE = {
-    "send-profile-view-digest": {
-        "task": "profiles.tasks.send_profile_view_digest",
-        "schedule": crontab(minute=10),
-    }
-}
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# CELERY_BEAT_SCHEDULE = {
+#     "send-profile-view-digest": {
+#         "task": "profiles.tasks.send_profile_view_digest",
+#         "schedule": crontab(minute=10),
+#     }
+# }
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

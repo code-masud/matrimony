@@ -9,14 +9,24 @@ from .models import ProfileView
 
 
 @shared_task
+def send_daily_profile_views():
+    print("Running scheduled task...")
+
+    for item in ProfileView.objects.all():
+        print(f"Check views for {item}")
+
+
+@shared_task
 def send_profile_view_digest():
+    print("Running scheduled task...")
+
     since = timezone.now() - timedelta(hours=1)
+
     views = (
         ProfileView.objects
         .filter(created_at__gte=since)
         .values('viewed__email', 'viewed__id')
         .annotate(total_views=Count('id'))
-        .iterator()
     )
 
     for item in views:
@@ -24,7 +34,7 @@ def send_profile_view_digest():
         total_views = item['total_views']
 
         context = {
-            'total_view':  total_views
+            'total_views': total_views
         }
 
         html_content = render_to_string(
@@ -42,4 +52,4 @@ def send_profile_view_digest():
         )
 
         msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        msg.send(fail_silently=False)
