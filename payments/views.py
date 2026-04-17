@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.utils import timezone
+from datetime import timedelta
+from membership.models import Subscription
 
-# Create your views here.
+
 class PaymentView(TemplateView):
     template_name = 'payments/index.html'
 
@@ -33,3 +36,15 @@ class CancelView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Cancel'
         return context
+
+def handle_successful_payment(payment):
+    if payment.status == 'completed':
+        payment.user.subscription_set.filter(is_active=True).update(is_active=False)
+
+        Subscription.objects.create(
+            user=payment.user,
+            membership=payment.membership,
+            start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=payment.membership.duration_days),
+            is_active=True
+        )

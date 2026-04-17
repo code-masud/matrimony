@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Membership
+from .models import Membership, Subscription
 
 
 @admin.register(Membership)
@@ -39,3 +39,46 @@ class MembershipAdmin(admin.ModelAdmin):
         if obj:
             return ('name',)
         return ()
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'membership',
+        'start_date',
+        'end_date',
+        'is_active',
+        'is_valid_now',
+    )
+
+    list_filter = (
+        'is_active',
+        'membership',
+        'start_date',
+        'end_date',
+    )
+
+    search_fields = (
+        'user__username',
+    )
+
+    ordering = ('-start_date',)
+
+    list_editable = ('is_active',)
+
+    readonly_fields = (
+        'user',
+        'membership',
+        'start_date',
+        'end_date',
+    )
+
+    def is_valid_now(self, obj):
+        return obj.is_valid()
+    
+    is_valid_now.boolean = True
+    is_valid_now.short_description = "Valid"
+
+    def has_add_permission(self, request):
+        return False
