@@ -1,8 +1,11 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import TemplateView, ListView
 from django.utils import timezone
 from datetime import timedelta
 from membership.models import Membership, Subscription
+from .models import PaymentMethod, Payment
+import uuid
+from django.contrib import messages
 
 
 class PaymentView(TemplateView):
@@ -14,13 +17,24 @@ class PaymentView(TemplateView):
         return context
 
 
-class CheckoutView(TemplateView):
+class CheckoutView(ListView):
     template_name = 'payments/checkout.html'
+    model = PaymentMethod
+    context_object_name = 'payment_methods'
+
+    def get_queryset(self):
+        return PaymentMethod.objects.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['membership'] = Membership.objects.get(id=self.kwargs['id'])
-        context["title"] = 'Checkout'
+
+        membership = get_object_or_404(Membership, id=self.kwargs['id'])
+
+        context.update({
+            'membership': membership,
+            'title': 'Checkout'
+        })
+
         return context
 
 
@@ -40,6 +54,58 @@ class CancelView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Cancel'
         return context
+
+
+def process_payment(request, method_id):
+    if request.method != "POST":
+        return redirect("payments:checkout")
+
+    method = get_object_or_404(PaymentMethod, id=method_id, is_active=True)
+
+    membership_id = request.POST.get("membership_id")
+    membership = get_object_or_404(Membership, id=membership_id)
+
+    full_name = request.POST.get("full_name")
+    email = request.POST.get("email")
+    phone = request.POST.get("phone")
+
+    if method.name.lower() in ["stripe", "card"]:
+        if not request.POST.get("card_number"):
+            messages.error(request, "Card details are required")
+            return redirect("payments:checkout", id=membership.id)
+
+    elif method.name.lower() in ["bkash", "nagad", "rocket"]:
+        if not request.POST.get("mobile_number"):
+            messages.error(request, "Mobile number is required")
+            return redirect("payments:checkout", id=membership.id)
+
+    # Create Payment record
+    payment = Payment.objects.create(
+        user=request.user,
+        membership=membership,
+        amount=membership.price,
+        transaction_id=str(uuid.uuid4()),
+        payment_method=method,
+        status="pending",
+        gateway_response={}
+    )
+
+    # 🔀 Redirect based on method
+    method_name = method.name.lower()
+
+    if method_name == "bkash":
+        return redirect("payments:bkash_payment", payment.id)
+
+    elif method_name == "nagad":
+        return redirect("payments:nagad_payment", payment.id)
+
+    elif method_name == "stripe":
+        return redirect("payments:stripe_payment", payment.id)
+
+    elif method_name == "sslcommerz":
+        return redirect("payments:sslcommerz_payment", payment.id)
+
+    return redirect("payments:payment_failed", payment.id)
 
 
 def handle_successful_payment(payment):
