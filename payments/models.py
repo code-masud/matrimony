@@ -2,6 +2,31 @@ from django.db import models
 from django.conf import settings
 from membership.models import Membership
 
+
+class PaymentMethod(models.Model):
+    METHOD_TYPES = [
+        ('card', 'Credit/Debit Card'),
+        ('mobile_banking', 'Mobile Banking'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('cash', 'Cash'),
+        ('gateway', 'Online Gateway'),
+    ]
+
+    name = models.CharField(max_length=100)
+    method_type = models.CharField(max_length=50, choices=METHOD_TYPES)
+
+    is_active = models.BooleanField(default=True)
+
+    api_key = models.CharField(max_length=255, blank=True, null=True)
+    api_secret = models.CharField(max_length=255, blank=True, null=True)
+    config = models.JSONField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Payment(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -10,14 +35,21 @@ class Payment(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    membership = models.ForeignKey(Membership, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
 
     transaction_id = models.CharField(max_length=255, unique=True)
-    payment_method = models.CharField(max_length=50, blank=True, null=True)
-
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    payment_method = models.ForeignKey(
+        PaymentMethod,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending')
 
     currency = models.CharField(max_length=10, default='USD')
     gateway_response = models.JSONField(blank=True, null=True)
