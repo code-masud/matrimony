@@ -43,54 +43,22 @@
             </tr>
         </thead>
         <tbody>
+            {% for payment in payment_list %}
             <tr>
-                <td>Feb 15, 2026</td>
-                <td>Gold Membership</td>
-                <td>1 Month</td>
-                <td>$39.00</td>
-                <td class="status-paid">Paid</td>
+                <td>{{ payment.created_at }}</td>
                 <td>
-                    <button class="btn btn-outline-secondary btn-sm">
+                    {{ payment.membership.get_name_display }}
+                </td>
+                <td>{{ payment.membership.duration_days }} Days</td>
+                <td>BDT {{ payment.amount }}</td>
+                <td class="status-paid">{{ payment.get_status_display }}</td>
+                <td>
+                    <a href="{% url 'payments:invoice' payment.id %}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-file-earmark-text"></i> View
-                    </button>
+                    </a>
                 </td>
             </tr>
-            <tr>
-                <td>Jan 15, 2026</td>
-                <td>Premium Membership</td>
-                <td>1 Month</td>
-                <td>$19.00</td>
-                <td class="status-paid">Paid</td>
-                <td>
-                    <button class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-file-earmark-text"></i> View
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Dec 15, 2025</td>
-                <td>Gold Membership</td>
-                <td>1 Month</td>
-                <td>$39.00</td>
-                <td class="status-failed">Failed</td>
-                <td>
-                    <button class="btn btn-outline-secondary btn-sm" disabled>
-                        <i class="bi bi-file-earmark-text"></i> N/A
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Nov 15, 2025</td>
-                <td>Free Plan</td>
-                <td>Trial</td>
-                <td>$0.00</td>
-                <td class="status-pending">Pending</td>
-                <td>
-                    <button class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-file-earmark-text"></i> View
-                    </button>
-                </td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

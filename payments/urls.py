@@ -4,6 +4,7 @@ from .views import *
 app_name = 'payments'
 urlpatterns = [
     path('', PaymentView.as_view(), name='my_payment'),
+    path('invoice/<int:pk>', InvoiceView.as_view(), name='invoice'),
     path('checkout/<int:id>', CheckoutView.as_view(), name='checkout'),
     path('process/<int:method_id>', process_payment, name='process_payment'),
 

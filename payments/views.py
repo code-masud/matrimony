@@ -1,3 +1,5 @@
+from multiprocessing import context
+
 from sslcommerz_lib import SSLCOMMERZ
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, DetailView
@@ -5,23 +7,34 @@ from django.utils import timezone
 from datetime import timedelta
 from membership.models import Membership, Subscription
 from .models import PaymentMethod, Payment
-import uuid
 from django.contrib import messages
-from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .utils import generate_trn_id
 from .services import initiate_ssl_payment, validate_payment
 import json
 
 
-class PaymentView(TemplateView):
+class PaymentView(ListView):
     template_name = 'payments/index.html'
+    model = Payment
+
+    def get_object(self):
+        return Payment.objects.get(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Payment'
         return context
 
+class InvoiceView(DetailView):
+    template_name = 'payments/invoice.html'
+    model = Payment
+    context_object_name = 'payment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Invoice"
+        return context
 
 class CheckoutView(ListView):
     template_name = 'payments/checkout.html'
