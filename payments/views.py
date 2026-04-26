@@ -155,21 +155,6 @@ def process_payment(request, method_id):
 
     return redirect("payments:payment_failed", payment.id)
 
-
-def handle_successful_payment(payment):
-    if payment.status == 'completed':
-        payment.user.subscription_set.filter(
-            is_active=True).update(is_active=False)
-
-        Subscription.objects.create(
-            user=payment.user,
-            membership=payment.membership,
-            start_date=timezone.now(),
-            end_date=timezone.now() + timedelta(days=payment.membership.duration_days),
-            is_active=True
-        )
-
-
 @csrf_exempt
 def payment_success(request):
     val_id = request.POST.get("val_id")
@@ -184,6 +169,8 @@ def payment_success(request):
         payment.gateway_response = validation
         payment.save()
 
+        handle_successful_payment(payment)
+        
         return redirect("payments:success-page", payment.id)
 
     payment.status = "failed"
@@ -211,3 +198,16 @@ def payment_cancel(request):
     payment.save()
 
     return redirect("payments:cancel-page", payment.id)
+
+def handle_successful_payment(payment):
+    if payment.status == 'completed':
+        payment.user.subscription_set.filter(
+            is_active=True).update(is_active=False)
+
+        Subscription.objects.create(
+            user=payment.user,
+            membership=payment.membership,
+            start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=payment.membership.duration_days),
+            is_active=True
+        )
