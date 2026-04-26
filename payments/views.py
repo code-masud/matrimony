@@ -11,12 +11,12 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from .utils import generate_trn_id
 from .services import initiate_ssl_payment, validate_payment
-import json
 
 
 class PaymentView(ListView):
     template_name = 'payments/index.html'
     model = Payment
+    paginate_by = 5
 
     def get_object(self):
         return Payment.objects.get(user=self.request.user)
