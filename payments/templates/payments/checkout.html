@@ -159,7 +159,7 @@
   radios.forEach(radio => {
     radio.addEventListener("change", function () {
       form.action = this.dataset.url;
-      toggleSections(this.dataset.name); // ✅ FIXED
+      toggleSections(this.dataset.name);
     });
   });
 
@@ -168,7 +168,7 @@
     const selected = document.querySelector('input[name="paymentMethod"]:checked');
     if (selected) {
       form.action = selected.dataset.url;
-      toggleSections(selected.dataset.name); // ✅ FIXED
+      toggleSections(selected.dataset.name);
     }
   });
 

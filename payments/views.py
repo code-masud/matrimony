@@ -90,7 +90,7 @@ def process_payment(request, method_id):
         gateway_response={}
     )
 
-    # 🔀 Redirect based on method
+    # Redirect based on method
     method_name = method.name.lower()
 
     if method_name == "bkash":
