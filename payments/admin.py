@@ -11,7 +11,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
         'is_active',
         'created_at',
     )
-
+    list_per_page = 10
     list_filter = (
         'method_type',
         'is_active',
@@ -48,7 +48,7 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     list_display = (
-        'user',
+        'id',
         'membership',
         'amount',
         'status',
@@ -56,7 +56,7 @@ class PaymentAdmin(admin.ModelAdmin):
         'transaction_id',
         'created_at',
     )
-
+    list_per_page = 10
     list_filter = (
         'status',
         'payment_method',

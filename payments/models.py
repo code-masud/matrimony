@@ -37,6 +37,11 @@ class Payment(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True)
+    phone = models.CharField(max_length=15, null=True)
+    email = models.EmailField(max_length=255, null=True)
+    address = models.TextField(blank=True, null=True)
+
     membership = models.ForeignKey(
         Membership, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
@@ -51,7 +56,7 @@ class Payment(models.Model):
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default='pending')
 
-    currency = models.CharField(max_length=10, default='USD')
+    currency = models.CharField(max_length=10, default='BDT')
     gateway_response = models.JSONField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

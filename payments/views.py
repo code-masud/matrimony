@@ -1,4 +1,5 @@
 from multiprocessing import context
+from os import name
 
 from sslcommerz_lib import SSLCOMMERZ
 from django.shortcuts import render, get_object_or_404, redirect
@@ -117,6 +118,10 @@ def process_payment(request, method_id):
     # Create Payment record
     payment = Payment.objects.create(
         user=request.user,
+        name=full_name,
+        email=email,
+        phone=phone,    
+        address=address,
         membership=membership,
         amount=membership.price,
         transaction_id=generate_trn_id(),
@@ -170,7 +175,7 @@ def payment_success(request):
         payment.save()
 
         handle_successful_payment(payment)
-        
+
         return redirect("payments:success-page", payment.id)
 
     payment.status = "failed"

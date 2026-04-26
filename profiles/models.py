@@ -221,6 +221,14 @@ class MatrimonyProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     @property
+    def address(self):
+        parts = []
+        for p in [self.city, self.state, self.country]:
+            if p and getattr(p, "name", None):
+                parts.append(p.name.strip())
+        return ", ".join(parts)
+    
+    @property
     def age(self):
         if not self.date_of_birth:
             return None
