@@ -1,11 +1,17 @@
+from sslcommerz_lib import SSLCOMMERZ
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from django.utils import timezone
 from datetime import timedelta
 from membership.models import Membership, Subscription
 from .models import PaymentMethod, Payment
 import uuid
 from django.contrib import messages
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from .utils import generate_trn_id
+from .services import initiate_ssl_payment, validate_payment
+import json
 
 
 class PaymentView(TemplateView):
@@ -38,8 +44,10 @@ class CheckoutView(ListView):
         return context
 
 
-class SuccessView(TemplateView):
+class SuccessView(DetailView):
     template_name = 'payments/success.html'
+    model = Payment
+    context_object_name = 'payment'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,12 +55,25 @@ class SuccessView(TemplateView):
         return context
 
 
-class CancelView(TemplateView):
+class CancelView(DetailView):
     template_name = 'payments/cancel.html'
+    model = Payment
+    context_object_name = 'payment'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Cancel'
+        return context
+
+
+class FailView(DetailView):
+    template_name = 'payments/fail.html'
+    model = Payment
+    context_object_name = 'payment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'Fail'
         return context
 
 
@@ -68,6 +89,7 @@ def process_payment(request, method_id):
     full_name = request.POST.get("full_name")
     email = request.POST.get("email")
     phone = request.POST.get("phone")
+    address = request.POST.get("address")
 
     if method.name.lower() in ["stripe", "card"]:
         if not request.POST.get("card_number"):
@@ -84,7 +106,7 @@ def process_payment(request, method_id):
         user=request.user,
         membership=membership,
         amount=membership.price,
-        transaction_id=str(uuid.uuid4()),
+        transaction_id=generate_trn_id(),
         payment_method=method,
         status="pending",
         gateway_response={}
@@ -103,7 +125,20 @@ def process_payment(request, method_id):
         return redirect("payments:stripe_payment", payment.id)
 
     elif method_name == "sslcommerz":
-        return redirect("payments:sslcommerz_payment", payment.id)
+        response = initiate_ssl_payment({
+            'name': full_name,
+            'phone': phone,
+            'email': email,
+            'address': address,
+            'transaction_id': payment.transaction_id,
+            'amount': payment.amount,
+            'membership': membership.name,
+        }, request)
+
+        if response.get("status") == "SUCCESS":
+            return redirect(response["GatewayPageURL"])
+
+        return redirect("payments:fail", payment.id)
 
     return redirect("payments:payment_failed", payment.id)
 
@@ -120,3 +155,46 @@ def handle_successful_payment(payment):
             end_date=timezone.now() + timedelta(days=payment.membership.duration_days),
             is_active=True
         )
+
+
+@csrf_exempt
+def payment_success(request):
+    val_id = request.POST.get("val_id")
+    tran_id = request.POST.get("tran_id")
+
+    payment = get_object_or_404(Payment, transaction_id=tran_id)
+
+    validation = validate_payment(val_id)
+
+    if validation.get("status") == "VALID":
+        payment.status = "completed"
+        payment.gateway_response = validation
+        payment.save()
+
+        return redirect("payments:success-page", payment.id)
+
+    payment.status = "failed"
+    payment.save()
+    return redirect("payments:fail-page", payment.id)
+
+
+@csrf_exempt
+def payment_fail(request):
+    tran_id = request.POST.get("tran_id")
+    payment = get_object_or_404(Payment, transaction_id=tran_id)
+
+    payment.status = "failed"
+    payment.save()
+
+    return redirect("payments:fail-page", payment.id)
+
+
+@csrf_exempt
+def payment_cancel(request):
+    tran_id = request.POST.get("tran_id")
+    payment = get_object_or_404(Payment, transaction_id=tran_id)
+
+    payment.status = "cancelled"
+    payment.save()
+
+    return redirect("payments:cancel-page", payment.id)

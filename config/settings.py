@@ -225,3 +225,12 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['BD']
+
+
+SSLCOMMERZ = {
+    "STORE_ID": "simec68b052d69d18b",
+    "STORE_PASSWORD": "simec68b052d69d18b@ssl",
+    "SANDBOX": True,
+}
+
+BASE_URL = "http://127.0.0.1:8000"
