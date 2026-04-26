@@ -6,12 +6,12 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="mb-0">Invoice</h2>
-        <small class="text-muted">#INV-001</small>
+        <small class="text-muted">#INV-{{ payment.id }}</small>
     </div>
     <div class="text-end">
-        <h5 class="mb-0">Your Company</h5>
-        <small>email@example.com</small><br>
-        <small>+880 123456789</small>
+        <h5 class="mb-0">{{ company_info.name }}</h5>
+        <small>{{ company_info.email }}</small><br>
+        <small>{{ company_info.phone }}</small>
     </div>
     </div>
 
@@ -19,13 +19,13 @@
     <div class="row mb-4">
     <div class="col-md-6">
         <h6>Billed To:</h6>
-        <p class="mb-0">Client Name</p>
-        <small>client@email.com</small><br>
-        <small>Address line</small>
+        <p class="mb-0">{{ payment.user.get_full_name }}</p>
+        <small>{{ payment.user.email }}</small><br>
+        <small>{{ payment.user.phone }}</small>
     </div>
     <div class="col-md-6 text-md-end">
-        <p class="mb-1"><strong>Date:</strong> 26 Apr 2026</p>
-        <p class="mb-1"><strong>Due Date:</strong> 30 Apr 2026</p>
+        <p class="mb-1"><strong>Date:</strong> {{ payment.created_at }}</p>
+        <p class="mb-1"><strong>Due Date:</strong> {{ payment.updated_at }} </p>
     </div>
     </div>
 
@@ -35,26 +35,19 @@
         <thead class="table-light">
         <tr>
             <th>#</th>
-            <th>Description</th>
-            <th class="text-end">Qty</th>
-            <th class="text-end">Price</th>
+            <th>Membership</th>
+            <th class="text-end">Duration</th>
+            <th class="text-end">Status</th>
             <th class="text-end">Total</th>
         </tr>
         </thead>
         <tbody>
         <tr>
             <td>1</td>
-            <td>Website Design</td>
-            <td class="text-end">1</td>
-            <td class="text-end">$500</td>
-            <td class="text-end">$500</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Hosting (1 year)</td>
-            <td class="text-end">1</td>
-            <td class="text-end">$100</td>
-            <td class="text-end">$100</td>
+            <td>{{ payment.membership.get_name_display }}</td>
+            <td class="text-end">{{ payment.membership.duration_days }} Days</td>
+            <td class="text-end">{{ payment.get_status_display }}</td>
+            <td class="text-end">{{ payment.amount }}</td>
         </tr>
         </tbody>
     </table>
@@ -66,15 +59,15 @@
         <table class="table">
         <tr>
             <th>Subtotal</th>
-            <td class="text-end">$600</td>
+            <td class="text-end">BDT {{ payment.amount }}</td>
         </tr>
         <tr>
-            <th>Tax (10%)</th>
-            <td class="text-end">$60</td>
+            <th>Discount (0%)</th>
+            <td class="text-end">0</td>
         </tr>
         <tr class="table-light">
             <th>Total</th>
-            <td class="text-end fw-bold">$660</td>
+            <td class="text-end fw-bold">BDT {{ payment.amount }}</td>
         </tr>
         </table>
     </div>
