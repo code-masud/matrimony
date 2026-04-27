@@ -1,10 +1,9 @@
-from multiprocessing import context
-from os import name
-
-from sslcommerz_lib import SSLCOMMERZ
+import stripe
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, DetailView
 from django.utils import timezone
+from django.urls import reverse
+from django.http import JsonResponse
 from datetime import timedelta
 from membership.models import Membership, Subscription
 from .models import PaymentMethod, Payment
@@ -12,6 +11,9 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from .utils import generate_trn_id
 from .services import initiate_ssl_payment, validate_payment
+from django.conf import settings
+
+client = stripe.StripeClient(settings.STRIPE_SECRET_KEY)
 
 
 class PaymentView(ListView):
@@ -27,6 +29,7 @@ class PaymentView(ListView):
         context["title"] = 'Payment'
         return context
 
+
 class InvoiceView(DetailView):
     template_name = 'payments/invoice.html'
     model = Payment
@@ -36,6 +39,7 @@ class InvoiceView(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Invoice"
         return context
+
 
 class CheckoutView(ListView):
     template_name = 'payments/checkout.html'
@@ -105,22 +109,12 @@ def process_payment(request, method_id):
     phone = request.POST.get("phone")
     address = request.POST.get("address")
 
-    if method.name.lower() in ["stripe", "card"]:
-        if not request.POST.get("card_number"):
-            messages.error(request, "Card details are required")
-            return redirect("payments:checkout", id=membership.id)
-
-    elif method.name.lower() in ["bkash", "nagad", "rocket"]:
-        if not request.POST.get("mobile_number"):
-            messages.error(request, "Mobile number is required")
-            return redirect("payments:checkout", id=membership.id)
-
     # Create Payment record
     payment = Payment.objects.create(
         user=request.user,
         name=full_name,
         email=email,
-        phone=phone,    
+        phone=phone,
         address=address,
         membership=membership,
         amount=membership.price,
@@ -130,7 +124,6 @@ def process_payment(request, method_id):
         gateway_response={}
     )
 
-    # Redirect based on method
     method_name = method.name.lower()
 
     if method_name == "bkash":
@@ -140,7 +133,67 @@ def process_payment(request, method_id):
         return redirect("payments:nagad_payment", payment.id)
 
     elif method_name == "stripe":
-        return redirect("payments:stripe_payment", payment.id)
+        try:
+            checkout_session = client.v1.checkout.sessions.create(params={
+                'line_items': [{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': payment.membership.name,
+                        },
+                        'unit_amount': int(payment.amount) * 100,
+                    },
+                    'quantity': 1,
+                }],
+                'mode': 'payment',
+                "success_url": request.build_absolute_uri(
+                    reverse("payments:success-page", args=[payment.id])
+                ),
+                "cancel_url": request.build_absolute_uri(
+                    reverse("payments:cancel-page", args=[payment.id])
+                ),
+            })
+        except Exception as e:
+            return str(e)
+
+        # Store only necessary info
+        payment.status = "completed"
+
+        # Retrieve full session with expanded data
+        session = stripe.checkout.Session.retrieve(
+            checkout_session.id,
+            expand=["payment_intent.charges"]
+        )
+
+        # Extract email
+        customer_email = None
+        if session.customer_details:
+            customer_email = session.customer_details.email
+
+        # Extract cardholder name
+        cardholder_name = None
+        if session.payment_intent and session.payment_intent.charges.data:
+            charge = session.payment_intent.charges.data[0]
+            cardholder_name = charge.billing_details.name
+
+        # Save data
+        payment.gateway_response = {
+            "id": session.id,
+            "url": session.url,
+            "payment_status": session.payment_status,
+            "email": customer_email,
+            "cardholder_name": cardholder_name,
+        }
+
+        # Optional: store directly in fields if you have them
+        payment.email = customer_email
+        payment.name = cardholder_name
+
+        payment.save()
+
+        handle_successful_payment(payment)
+
+        return redirect(checkout_session.url, code=303)
 
     elif method_name == "sslcommerz":
         response = initiate_ssl_payment({
@@ -159,6 +212,7 @@ def process_payment(request, method_id):
         return redirect("payments:fail", payment.id)
 
     return redirect("payments:payment_failed", payment.id)
+
 
 @csrf_exempt
 def payment_success(request):
@@ -203,6 +257,7 @@ def payment_cancel(request):
     payment.save()
 
     return redirect("payments:cancel-page", payment.id)
+
 
 def handle_successful_payment(payment):
     if payment.status == 'completed':

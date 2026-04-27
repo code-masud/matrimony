@@ -228,9 +228,10 @@ CITIES_LIGHT_INCLUDE_COUNTRIES = ['BD']
 
 
 SSLCOMMERZ = {
-    "STORE_ID": "simec68b052d69d18b",
-    "STORE_PASSWORD": "simec68b052d69d18b@ssl",
-    "SANDBOX": True,
+    "STORE_ID": os.getenv('STORE_ID'),
+    "STORE_PASSWORD": os.getenv('STORE_PASSWORD'),
+    "SANDBOX": os.getenv('SANDBOX') == "True",
 }
 
-BASE_URL = "http://127.0.0.1:8000"
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')

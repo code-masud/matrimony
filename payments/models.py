@@ -56,7 +56,7 @@ class Payment(models.Model):
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default='pending')
 
-    currency = models.CharField(max_length=10, default='BDT')
+    currency = models.CharField(max_length=10, default='USD')
     gateway_response = models.JSONField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

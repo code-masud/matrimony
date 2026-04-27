@@ -1,6 +1,10 @@
 import requests
+import stripe
 from django.conf import settings
 from django.urls import reverse
+from django.shortcuts import redirect
+
+client = stripe.StripeClient(settings.STRIPE_SECRET_KEY)
 
 
 def get_base_url():
@@ -21,7 +25,7 @@ def initiate_ssl_payment(order, request):
         'store_id': settings.SSLCOMMERZ["STORE_ID"],
         'store_passwd': settings.SSLCOMMERZ["STORE_PASSWORD"],
         'total_amount': float(order['amount']),
-        'currency': 'BDT',
+        'currency': 'USD',
         'tran_id': order['transaction_id'],
         'success_url': success_url,
         'fail_url': fail_url,
