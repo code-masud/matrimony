@@ -1,5 +1,5 @@
 from email import message
-
+from django.utils import timezone
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import TemplateView, ListView
@@ -9,6 +9,7 @@ from django.db.models import OuterRef, Exists
 from django.http import JsonResponse
 from .models import InterestRequest, Shortlist
 from notifications.models import Notification
+from membership.models import Subscription
 
 User = get_user_model()
 
@@ -79,6 +80,20 @@ def send_interest(request):
     if not receiver_id:
         return JsonResponse({"error": "receiver_id missing"}, status=400)
 
+    subscription = (
+        Subscription.objects
+        .select_related('membership')
+        .filter(
+            user=request.user,
+            is_active=True,
+            end_date__gt=timezone.now()
+        )
+        .first()
+    )
+
+    if not subscription or not subscription.can_send_interest():
+        return JsonResponse({"error": "Upgrade your plan"}, status=403)
+
     receiver = User.objects.get(id=receiver_id)
 
     interest, created = InterestRequest.objects.get_or_create(
@@ -116,6 +131,20 @@ def make_shortlist(request):
 
     if not receiver_id:
         return JsonResponse({"error": "receiver_id missing"}, status=400)
+
+    subscription = (
+        Subscription.objects
+        .select_related('membership')
+        .filter(
+            user=request.user,
+            is_active=True,
+            end_date__gt=timezone.now()
+        )
+        .first()
+    )
+
+    if not subscription or not subscription.can_send_interest():
+        return JsonResponse({"error": "Upgrade your plan"}, status=403)
 
     receiver = User.objects.get(id=receiver_id)
 
