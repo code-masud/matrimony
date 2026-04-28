@@ -1,3 +1,5 @@
+from django.db.models import Q, Exists, OuterRef
+from django.views.generic import ListView
 from email import message
 from django.utils import timezone
 from django.shortcuts import render
@@ -10,17 +12,135 @@ from django.http import JsonResponse
 from .models import InterestRequest, Shortlist
 from notifications.models import Notification
 from membership.models import Subscription
+from datetime import date, timedelta
+from cities_light.models import Country
 
 User = get_user_model()
 
 # Create your views here.
 
 
-class MatchesView(TemplateView):
+class MatchesView(ListView):
     template_name = 'matches/index.html'
+    context_object_name = 'matches'
+    paginate_by = 6
+
+    def get_queryset(self):
+        user = self.request.user
+        preference = user.partner_preference
+
+        today = date.today()
+
+        min_dob = date(today.year - preference.max_age, today.month, today.day)
+        max_dob = date(today.year - preference.min_age, today.month, today.day)
+
+        queryset = User.objects.select_related('matrimony_profile').filter(
+            matrimony_profile__is_profile_completed=True,
+            matrimony_profile__date_of_birth__range=(min_dob, max_dob),
+        ).exclude(id=user.id)
+
+        filters = Q()
+
+        # if preference.religion:
+        #     filters &= Q(matrimony_profile__religion=preference.religion)
+
+        # if preference.marital_status:
+        #     filters &= Q(
+        #         matrimony_profile__marital_status=preference.marital_status)
+
+        # if preference.education:
+        #     filters &= Q(matrimony_profile__education=preference.education)
+
+        # if preference.occupation:
+        #     filters &= Q(matrimony_profile__occupation=preference.occupation)
+
+        # if preference.country:
+        #     filters &= Q(matrimony_profile__country=preference.country)
+
+        # if preference.state:
+        #     filters &= Q(matrimony_profile__state=preference.state)
+
+        # if preference.city:
+        #     filters &= Q(matrimony_profile__city=preference.city)
+
+        if preference.min_height_cm:
+            filters &= Q(
+                matrimony_profile__height_cm__gte=preference.min_height_cm)
+
+        if preference.max_height_cm:
+            filters &= Q(
+                matrimony_profile__height_cm__lte=preference.max_height_cm)
+
+        queryset = queryset.filter(filters)
+
+        # Filters
+        query = self.request.GET.get('q', "")
+        religion = self.request.GET.get('religion', "")
+        location = self.request.GET.get('location', "")
+        age_range = self.request.GET.get('age_range', "")
+
+        if query:
+            queryset = queryset.filter(
+                Q(username__icontains=query) |
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query)
+            )
+
+        if religion:
+            queryset = queryset.filter(
+                matrimony_profile__religion=religion
+            )
+
+        if location:
+            queryset = queryset.filter(
+                matrimony_profile__country_id=location
+            )
+
+        if age_range:
+            try:
+                min_age, max_age = map(int, age_range.split('-'))
+                today = date.today()
+
+                queryset = queryset.filter(
+                    matrimony_profile__date_of_birth__range=[
+                        today - timedelta(days=365.25 * max_age),
+                        today - timedelta(days=365.25 * min_age)
+                    ]
+                )
+            except ValueError:
+                pass
+
+        interest_subquery = InterestRequest.objects.filter(
+            sender=user,
+            receiver=OuterRef('pk')
+        )
+
+        shortlist_subquery = Shortlist.objects.filter(
+            user=user,
+            shortlisted_user=OuterRef('pk')
+        )
+
+        queryset = queryset.annotate(
+            interest_sent=Exists(interest_subquery),
+            shortlisted=Exists(shortlist_subquery),
+        )
+
+        queryset = queryset.order_by(
+            '-matrimony_profile__created_at'
+        )
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        request = self.request
+
+        context["query"] = request.GET.get('q', "")
+        context["age_range"] = request.GET.get('age_range', "")
+        context["location"] = request.GET.get('location', "")
+        context["religion"] = request.GET.get('religion', "")
+        context['countries'] = Country.objects.all()
+
         context["title"] = 'Matches'
         return context
 
