@@ -29,7 +29,7 @@ class ExploreView(ListView):
 
         queryset = User.objects.exclude(
             id=request.user.id
-        ).select_related('matrimony_profile').annotate(
+        ).exclude(matrimony_profile__gender=request.user.matrimony_profile.gender).select_related('matrimony_profile').annotate(
             interest_requested=Exists(interest_subquery),
             shortlisted=Exists(shortlist_subquery),
         )
