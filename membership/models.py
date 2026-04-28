@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
+
 class Membership(models.Model):
     Membership_CHOICES = [
         ('free', 'Free'),
@@ -26,8 +27,10 @@ class Membership(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    membership = models.ForeignKey(Membership, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    membership = models.ForeignKey(
+        Membership, on_delete=models.SET_NULL, null=True)
 
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField()
@@ -36,6 +39,14 @@ class Subscription(models.Model):
 
     def is_valid(self):
         return self.end_date > timezone.now()
+
+    def can_send_interest(self):
+        return (
+            self.is_active and
+            self.end_date > timezone.now() and
+            self.membership and
+            self.membership.can_send_interest
+        )
 
     def __str__(self):
         return f"{self.user} - {self.membership}"
