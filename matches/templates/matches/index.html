@@ -15,83 +15,267 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 </style>
-
+{% load static %}
 <!-- Page Header -->
 <div class="text-center mb-4">
     <h2 class="fw-bold">Your Matches</h2>
     <p class="text-muted">Based on your preferences and interests</p>
 </div>
 
-<!-- Filter Bar -->
-<div class="filter-bar d-flex flex-wrap justify-content-between align-items-center">
-    <div class="d-flex gap-2">
-        <select class="form-select">
-            <option selected>Age Range</option>
-            <option>25-30</option>
-            <option>30-35</option>
-            <option>35-40</option>
-        </select>
-        <select class="form-select">
-            <option selected>Location</option>
-            <option>Dhaka</option>
-            <option>Delhi</option>
-            <option>Mumbai</option>
-        </select>
-        <select class="form-select">
-            <option selected>Religion</option>
-            <option>Hindu</option>
-            <option>Muslim</option>
-            <option>Christian</option>
-        </select>
-    </div>
-    <button class="btn btn-primary"><i class="bi bi-funnel"></i> Apply Filters</button>
+<!-- Search Bar -->
+<div class="search-bar">
+    <form class="row g-3" method="GET" action="{% url 'matches:my_match' %}">
+        <div class="col-md-3">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Name or Keyword" />
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="age_range">
+                <option value="" {% if not age_range %} selected {% endif %}>Age Range</option>
+                <option value="25-30" {% if age_range == "25-30" %} selected {% endif %}>25-30</option>
+                <option value="30-35" {% if age_range == "30-35" %} selected {% endif %}>30-35</option>
+                <option value="35-40" {% if age_range == "35-40" %} selected {% endif %}>35-40</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="location">
+                <option value="" {% if not location %} selected {% endif %}>Location</option>
+                {% for country in countries %}
+                    <option value="{{ country.id }}" {% if location == country.id|slugify %} selected {% endif %}>
+                        {{ country.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="religion">
+                <option value="" {% if not religion %} selected {% endif %} selected>Religion</option>
+                <option {% if religion == "hindu" %} selected {% endif %} value="hindu">Hindu</option>
+                <option {% if religion == "muslim" %} selected {% endif %} value="muslim">Muslim</option>
+                <option {% if religion == "christian" %} selected {% endif %} value="christian">Christian</option>
+                <option {% if religion == "sikh" %} selected {% endif %} value="sikh">Sikh</option>
+                <option {% if religion == "other" %} selected {% endif %} value="other">Other</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-grid">
+            <button class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+        </div>
+    </form>
 </div>
 
-<!-- Matches Grid -->
-<div class="row g-4">
-    <!-- Match Card -->
+<!-- Search Results -->
+<div class="row g-4 mt-3">
+    <!-- Result Card -->
+    {% for user in matches %}
     <div class="col-md-4">
-        <div class="card match-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?woman,portrait" class="card-img-top" alt="Match" />
+        <div class="card result-card shadow-sm">
+            <a href="{% url 'profiles:detail' user.id %}">
+                {% if user.matrimony_profile.profile_picture %}
+                <img src="{{ user.matrimony_profile.profile_picture.url }}" class="card-img-top" alt="Profile" />
+                {% else %}
+                <img src="{% static 'avatar/male.png' %}" class="card-img-top" alt="Profile" />
+                {% endif %}
+            </a>
             <div class="card-body">
-                <h5 class="card-title">Sophia Sharma, 28</h5>
-                <p class="card-text">Software Engineer | New Delhi</p>
+                <h5 class="card-title">{{ user.get_full_name }}, {{ user.matrimony_profile.age }}</h5>
+                <p class="card-text">{{ user.matrimony_profile.get_occupation_display }} | {{ user.matrimony_profile.country }}</p>
                 <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
+                    {% if user.interest_requested %}
+                    {% else %}
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm send-interest-btn"
+                            onclick="sendInterest({{ user.id }}, this)">
+                        <i class="bi bi-heart"></i>
+                        <span class="btn-text">Send Interest</span>
+                    </button>  
+                    {% endif %}
+                    {% if user.shortlisted %}
+                    {% else %}  
+                    <button class="btn btn-outline-secondary btn-sm shortlist-btn" onclick="makeShortlist({{ user.id }}, this)">
+                        <i class="bi bi-bookmark"></i>
+                        <span class="shortlist-btn-text">Shortlist</span>
+                    </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    {% endfor %}
+    {% if is_paginated %}   
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
 
-    <!-- Match Card -->
-    <div class="col-md-4">
-        <div class="card match-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?man,portrait" class="card-img-top" alt="Match" />
-            <div class="card-body">
-                <h5 class="card-title">Arjun Kumar, 30</h5>
-                <p class="card-text">Entrepreneur | Bangalore</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page=1&q={{ query }}&religion={{ religion }}&location={{ location }}&age_range={{ age_range }}">
+                        &laquo;
+                    </a>
+                </li>
 
-    <!-- Match Card -->
-    <div class="col-md-4">
-        <div class="card match-card shadow-sm">
-            <img src="https://source.unsplash.com/400x300/?smile,portrait" class="card-img-top" alt="Match" />
-            <div class="card-body">
-                <h5 class="card-title">Priya Singh, 26</h5>
-                <p class="card-text">Teacher | Mumbai</p>
-                <div class="d-flex justify-content-between">
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-heart"></i> Send Interest</button>
-                    <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-bookmark"></i> Shortlist</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}&q={{ query }}&religion={{ religion }}&location={{ location }}&age_range={{ age_range }}">
+                        Previous
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+
+            <!-- Page Numbers -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                    <li class="page-item">
+                        <a class="page-link"
+                        href="?page={{ num }}&q={{ query }}&religion={{ religion }}&location={{ location }}&age_range={{ age_range }}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}&q={{ query }}&religion={{ religion }}&location={{ location }}&age_range={{ age_range }}">
+                        Next
+                    </a>
+                </li>
+
+                <li class="page-item">
+                    <a class="page-link"
+                    href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}&religion={{ religion }}&location={{ location }}&age_range={{ age_range }}">
+                        &raquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>
+        {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
+<script>
+function getCSRFToken() {
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken'))
+        ?.split('=')[1];
+}
+
+function showToast(message, type="success") {
+    const toast = document.createElement("div");
+    toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3 show`;
+    toast.style.zIndex = "9999";
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function sendInterest(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+
+    fetch("{% url 'matches:send_interest' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Sent ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Interest sent!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already Sent";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already sent interest!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Send Interest";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+
+function makeShortlist(userId, btn) {
+    if (btn.disabled) return;
+
+    const textSpan = btn.querySelector(".shortlist-btn-text");
+
+    btn.disabled = true;
+    textSpan.innerHTML = `<span class="spinner-border spinner-border-sm"></span> shortlisting...`;
+
+    fetch("{% url 'matches:make_shortlist' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: "receiver_id=" + userId
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            textSpan.innerHTML = "Shortlisted ✔";
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-success");
+
+            showToast("✅ Shortlisted!", "success");
+
+        } else if (data.status === "exists") {
+            textSpan.innerHTML = "Already shortlisted";
+            btn.classList.add("btn-secondary");
+
+            showToast("⚠️ Already shortlisted!", "warning");
+
+        } else {
+            throw new Error();
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        textSpan.innerHTML = "Shortlisted";
+        showToast("❌ Something went wrong", "danger");
+    });
+}
+</script>
 {% endblock %}
