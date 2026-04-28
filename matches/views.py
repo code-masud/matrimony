@@ -14,6 +14,7 @@ from notifications.models import Notification
 from membership.models import Subscription
 from datetime import date, timedelta
 from cities_light.models import Country
+from .tasks import send_interest_email, send_shortlist_email
 
 User = get_user_model()
 
@@ -233,6 +234,12 @@ def send_interest(request):
             text=f"{request.user.username} sent you an interest"
         )
 
+        send_interest_email.delay(
+            receiver.email,
+            "New Interest Received",
+            f"{request.user.username} sent you an interest."
+        )
+
         return JsonResponse({
             "status": "success",
             "message": "Interest sent successfully"
@@ -271,6 +278,11 @@ def accept_interest(request):
         text="Your interest was accepted"
     )
 
+    send_interest_email.delay(
+        interest.sender.email,
+        "Interest Accepted",
+        f"{request.user.username} accepted your interest."
+    )
     return JsonResponse({"status": "success"})
 
 
@@ -295,6 +307,12 @@ def reject_interest(request):
         receiver=interest.sender,
         notification_type="interest_rejected",
         text="Your interest was rejected"
+    )
+
+    send_interest_email.delay(
+        interest.sender.email,
+        "Interest Rejected",
+        f"{request.user.username} rejected your interest."
     )
 
     return JsonResponse({"status": "rejected"})
@@ -336,6 +354,12 @@ def make_shortlist(request):
             text=f"{request.user.username} short listed you"
         )
 
+        send_shortlist_email.delay(
+            receiver.email,
+            "Add Shortlist",
+            f"{request.user.username} short listed you."
+        )
+
         return JsonResponse({
             "status": "success",
             "message": "Shortlisted successfully"
@@ -370,6 +394,12 @@ def remove_shortlist(request):
             receiver=receiver,
             notification_type="short_list",
             text=f"{request.user.username} remove you from short list"
+        )
+
+        send_shortlist_email.delay(
+            receiver.email,
+            "Remove Shortlist",
+            f"{request.user.username} remove you from short list"
         )
 
         return JsonResponse({
