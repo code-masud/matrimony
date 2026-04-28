@@ -185,7 +185,6 @@ def process_payment(request, method_id):
             "cardholder_name": cardholder_name,
         }
 
-        # Optional: store directly in fields if you have them
         payment.email = customer_email
         payment.name = cardholder_name
 
