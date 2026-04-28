@@ -1,18 +1,37 @@
+
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import ListView
 from .utils import send_notification
 from .models import Notification
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
 
-class NotificationView(TemplateView):
+class NotificationView(ListView):
     template_name = 'notifications/index.html'
+    context_object_name = 'notifications'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = self.request.user
+
+        queryset = (
+            Notification.objects
+            .select_related('sender')
+            .filter(receiver=user)
+            .order_by('-created_at')
+        )
+
+        Notification.objects.filter(
+            receiver=user,
+            is_read=False
+        ).update(is_read=True)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Notifications'
-        send_notification(self.request.user.username, 3, "Hello from Django!")
         return context
 
 

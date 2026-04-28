@@ -246,6 +246,61 @@ def send_interest(request):
 
 
 @login_required
+def accept_interest(request):
+    sender_id = request.POST.get('sender_id')
+
+    if not sender_id:
+        return JsonResponse({"error": "sender_id missing"}, status=400)
+
+    try:
+        interest = InterestRequest.objects.get(
+            sender_id=sender_id,
+            receiver=request.user,
+            status=InterestRequest.StatusChoices.PENDING
+        )
+    except InterestRequest.DoesNotExist:
+        return JsonResponse({"error": "Interest not found"}, status=404)
+
+    interest.status = InterestRequest.StatusChoices.ACCEPTED
+    interest.save()
+
+    Notification.objects.create(
+        sender=request.user,
+        receiver=interest.sender,
+        notification_type="interest_accepted",
+        text="Your interest was accepted"
+    )
+
+    return JsonResponse({"status": "success"})
+
+
+@login_required
+def reject_interest(request):
+    sender_id = request.POST.get('sender_id')
+
+    try:
+        interest = InterestRequest.objects.get(
+            sender_id=sender_id,
+            receiver=request.user,
+            status=InterestRequest.StatusChoices.PENDING
+        )
+    except InterestRequest.DoesNotExist:
+        return JsonResponse({"error": "Interest not found"}, status=404)
+
+    interest.status = InterestRequest.StatusChoices.REJECTED
+    interest.save()
+
+    Notification.objects.create(
+        sender=request.user,
+        receiver=interest.sender,
+        notification_type="interest_rejected",
+        text="Your interest was rejected"
+    )
+
+    return JsonResponse({"status": "rejected"})
+
+
+@login_required
 def make_shortlist(request):
     receiver_id = request.POST.get('receiver_id')
 
