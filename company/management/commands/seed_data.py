@@ -1,9 +1,14 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from faker import Faker
 import random
+import membership
+from membership.models import Membership, Subscription
 import requests
+from django.utils import timezone
 
 from profiles.models import (
     AnnualIncomeChoices, EducationChoices, GenderChoices,
@@ -39,17 +44,17 @@ class Command(BaseCommand):
         region = Region.objects.filter(country=country).order_by('?').first()
         city = City.objects.filter(region=region).order_by('?').first()
 
-        gender = get_choice(GenderChoices.choices)
-
-        if gender.lower() == "male":
-            first_name = fake.first_name_male()
-        else:
-            first_name = fake.first_name_female()
-
-        last_name = fake.last_name()
-
         # Create Users + Profiles + Preferences
         for _ in range(100):  # number of users
+            gender = get_choice(GenderChoices.choices)
+
+            if gender.lower() == "male":
+                first_name = fake.first_name_male()
+            else:
+                first_name = fake.first_name_female()
+
+            last_name = fake.last_name()
+
             user = User.objects.create_user(
                 username=fake.unique.user_name(),
                 email=fake.unique.email(),
@@ -60,8 +65,17 @@ class Command(BaseCommand):
                 password="password123"
             )
 
-            # Create MatrimonyProfile
+            # Fee membership subscription
+            membership = Membership.objects.get(id=5)
+            subscription = Subscription.objects.create(
+                user=user,
+                membership=membership,
+                start_date=timezone.now(),
+                end_date=timezone.now()+timedelta(days=30),
+                is_active=True,
+            )
 
+            # Create MatrimonyProfile
             dob = fake.date_of_birth(minimum_age=20, maximum_age=40)
             profile = MatrimonyProfile.objects.create(
                 user=user,
