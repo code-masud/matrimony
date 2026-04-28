@@ -5,6 +5,7 @@ from .models import Membership, Subscription
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'name',
         'price',
         'duration_days',
@@ -14,7 +15,7 @@ class MembershipAdmin(admin.ModelAdmin):
         'personalized_matchmaking',
         'is_active',
     )
-
+    list_per_page = 10
     list_filter = ('is_active', 'can_chat', 'priority_support')
     search_fields = ('name',)
     ordering = ('name',)
@@ -44,6 +45,7 @@ class MembershipAdmin(admin.ModelAdmin):
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'user',
         'membership',
         'start_date',
@@ -51,7 +53,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'is_active',
         'is_valid_now',
     )
-
+    list_per_page = 10
     list_filter = (
         'is_active',
         'membership',
